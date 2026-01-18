@@ -1,26 +1,38 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* app/globals.css */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@media print {
+  /* 1. Ocultar TODO el cuerpo de la página */
+  body * {
+    visibility: hidden;
+    height: 0; /* Para que no ocupe espacio extra */
+    overflow: hidden; 
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* 2. Forzar que el área imprimible sea visible y ocupe toda la hoja */
+  #printable-area, #printable-area * {
+    visibility: visible !important;
+    display: block !important; /* IMPORTANTE: Vence al 'hidden' de Tailwind */
+    height: auto !important;
+    overflow: visible !important;
+    color: black !important; /* Asegura texto negro */
+  }
+
+  /* 3. Posicionar la boleta arriba a la izquierda absoluta */
+  #printable-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    background: white;
+    z-index: 9999; /* Ponerlo encima de todo */
+  }
+
+  /* Ocultar botones de la propia interfaz si se colaran */
+  button {
+    display: none !important;
+  }
 }
