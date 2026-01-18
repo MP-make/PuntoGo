@@ -32,10 +32,12 @@ export default function RootLayout({
       >
         <AuthProvider>
           <CartProvider>
-            {children}
+            <div className="min-h-screen flex flex-col">
+              {children}
+            </div>
+            <Footer />
           </CartProvider>
         </AuthProvider>
-        <Footer />
       </body>
     </html>
   );

@@ -19,19 +19,19 @@ const slides: Slide[] = [
     title: 'Oferta Fin de Semana',
     subtitle: 'Hasta 40% en Whiskys',
     buttonText: 'Ver Ofertas',
-    image: 'https://images.unsplash.com/photo-1597075687490-8f673c6c17f6?auto=format&fit=crop&q=80'
+    image: '/Carrusel/Carrusel-cocteles.png'
   },
   {
-    title: 'Nuevos Vinos Importados',
+    title: 'Nuevos Vinos Importantes',
     subtitle: 'Descubre sabores únicos',
     buttonText: 'Explorar',
-    image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&q=80'
+    image: '/Carrusel/Carrusel-vino.png'
   },
   {
     title: 'Cervezas Artesanales',
     subtitle: 'Frescas y de calidad',
     buttonText: 'Comprar Ahora',
-    image: 'https://images.unsplash.com/photo-1618183180483-3687355dc5c4?auto=format&fit=crop&q=80'
+    image: '/Carrusel/Carrusel-cervezaartesanal.png'
   },
 ];
 

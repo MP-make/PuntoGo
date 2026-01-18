@@ -2,15 +2,17 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useAuth } from '../contexts/AuthContext';
 
 const Footer = () => {
+  const { user, logout } = useAuth();
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#111827] text-gray-400 border-t border-gray-800 mt-auto">
+    <footer className="bg-[#111827] text-gray-400 border-t border-gray-800 mt-auto print:hidden">
       <div className="max-w-7xl mx-auto px-4 pt-16 pb-8">
         
-        {/* Grid Principal */}
+        {/* Grid Principal de Enlaces */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           
           {/* Col 1: Marca */}
@@ -30,9 +32,18 @@ const Footer = () => {
           <div>
             <h4 className="text-white font-bold mb-6 text-sm uppercase tracking-widest">Mi Cuenta</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link href="/profile" className="hover:text-blue-400 transition-colors flex items-center gap-2">Mi Perfil</Link></li>
-              <li><Link href="/orders" className="hover:text-blue-400 transition-colors flex items-center gap-2">Mis Pedidos</Link></li>
-              <li><Link href="/login" className="hover:text-blue-400 transition-colors flex items-center gap-2">Iniciar Sesión</Link></li>
+              {user ? (
+                <>
+                  <li><Link href="/profile" className="hover:text-blue-400 transition-colors flex items-center gap-2">Mi Perfil</Link></li>
+                  <li><Link href="/orders" className="hover:text-blue-400 transition-colors flex items-center gap-2">Mis Pedidos</Link></li>
+                  <li><button onClick={logout} className="hover:text-blue-400 transition-colors flex items-center gap-2 text-left">Cerrar Sesión</button></li>
+                </>
+              ) : (
+                <>
+                  <li><Link href="/login" className="hover:text-blue-400 transition-colors flex items-center gap-2">Iniciar Sesión</Link></li>
+                  <li><Link href="/register" className="hover:text-blue-400 transition-colors flex items-center gap-2">Registrarse</Link></li>
+                </>
+              )}
             </ul>
           </div>
 
@@ -65,44 +76,74 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Métodos de Pago */}
+        {/* Métodos de Pago (MODIFICADO) */}
         <div className="border-t border-gray-800 pt-8 pb-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <p className="text-xs font-bold text-gray-500 uppercase mb-3 text-center md:text-left">Métodos de Pago</p>
-              <div className="flex gap-3">
-                {/* YAPE */}
-                <div className="px-4 py-1.5 rounded bg-purple-600 text-white font-bold text-xs tracking-wider shadow-lg shadow-purple-900/30">
-                  YAPE
-                </div>
-                {/* PLIN */}
-                <div className="px-4 py-1.5 rounded bg-cyan-500 text-white font-bold text-xs tracking-wider shadow-lg shadow-cyan-900/30">
-                  PLIN
-                </div>
-                {/* EFECTIVO */}
-                <div className="px-4 py-1.5 rounded bg-green-600 text-white font-bold text-xs tracking-wider shadow-lg shadow-green-900/30">
-                  EFECTIVO
-                </div>
-                {/* TARJETAS */}
-                <div className="px-4 py-1.5 rounded bg-gray-700 text-gray-300 font-bold text-xs tracking-wider border border-gray-600">
-                  TARJETAS
-                </div>
+          <div>
+            <p className="text-xs font-bold text-gray-500 uppercase mb-4 text-center md:text-left">Métodos de Pago Aceptados</p>
+            <div className="flex flex-wrap gap-4 items-center justify-center md:justify-start">
+              {/* TUS IMÁGENES ORIGINALES */}
+              <img src="/MetodosP/icono-yape.png" alt="Yape" className="h-8 w-auto" />
+              <img src="/MetodosP/icono-plin.png" alt="Plin" className="h-8 w-auto" />
+              <img src="/MetodosP/icono-MC.png" alt="Mastercard" className="h-8 w-auto" />
+              
+              {/* EFECTIVO MEJORADO (Estilo profesional) */}
+              <div className="h-8 px-3 bg-emerald-900/30 border border-emerald-700/50 rounded flex items-center justify-center gap-1.5">
+                 <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                 <span className="text-emerald-500 font-bold text-[10px] tracking-wide uppercase">Efectivo</span>
               </div>
-            </div>
-            <div className="text-right">
-               <div className="inline-block border border-gray-700 bg-gray-800/50 rounded p-2">
-                  <p className="text-[10px] text-gray-500 font-medium">
-                    🚫 PROHIBIDA LA VENTA DE BEBIDAS ALCOHÓLICAS A MENORES DE 18 AÑOS.
-                  </p>
-               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Copyright */}
-        <div className="text-center border-t border-gray-800 pt-8 text-xs text-gray-600">
-          <p>&copy; {currentYear} Ventify Market. Todos los derechos reservados.</p>
+      {/* Barra Legal Profesional (NUEVO ESTILO AZUL) */}
+      <div className="bg-[#002855] text-white py-4 px-6 border-t border-blue-900">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+          
+          {/* Texto Legal Principal */}
+          <div className="flex-1">
+             <h5 className="font-bold text-sm md:text-base tracking-wider mb-1">TOMAR BEBIDAS ALCOHÓLICAS EN EXCESO ES DAÑINO</h5>
+             <p className="text-[9px] text-blue-200 uppercase tracking-widest">
+                Ministerio de Salud Pública del Perú. Ley 28681.
+             </p>
+          </div>
+
+          {/* Iconos de Advertencia */}
+          <div className="flex items-center gap-6 opacity-90 justify-center">
+            {/* +18 */}
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center font-bold text-xs mb-1 leading-none pt-0.5">
+                +18
+              </div>
+              <span className="text-[8px] font-bold uppercase leading-tight">Prohibida<br/>Venta</span>
+            </div>
+
+            {/* No Manejar */}
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center mb-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              </div>
+              <span className="text-[8px] font-bold uppercase leading-tight">Si tomas<br/>No manejes</span>
+            </div>
+
+            {/* No Gestantes */}
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center mb-1 relative overflow-hidden">
+                 <span className="font-serif text-sm italic relative z-10">♀</span>
+                 <div className="absolute w-full h-0.5 bg-white rotate-45 top-1/2 left-0 -translate-y-1/2"></div>
+              </div>
+              <span className="text-[8px] font-bold uppercase leading-tight">No<br/>Gestantes</span>
+            </div>
+          </div>
+
         </div>
+      </div>
+
+      {/* Copyright (AL FINAL) */}
+      <div className="bg-black py-3 text-center border-t border-gray-900">
+        <p className="text-[10px] text-gray-600">
+          &copy; {currentYear} Ventify Market. Todos los derechos reservados.
+        </p>
       </div>
     </footer>
   );
