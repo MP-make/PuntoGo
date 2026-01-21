@@ -43,7 +43,7 @@ const Navbar: React.FC = () => {
               <img
                 src="/PuntoGo logo sinfondo.png"
                 alt="PuntoGo"
-                className="h-10 sm:h-12 md:h-14 w-auto"
+                className="h-12 sm:h-14 md:h-16 lg:h-[72px] w-auto"
               />
             </Link>
 

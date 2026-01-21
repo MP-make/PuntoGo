@@ -79,6 +79,12 @@ export default async function Home({ searchParams }: HomeProps) {
     }
     
     return matchesSearch && matchesCategory;
+  }).sort((a, b) => {
+    // Ordenar primero por stock (productos con stock primero)
+    // Si ambos tienen stock o ambos no tienen, mantener orden original
+    if (a.stock > 0 && b.stock === 0) return -1;
+    if (a.stock === 0 && b.stock > 0) return 1;
+    return 0;
   });
 
   // 8. Configuración de Títulos Dinámicos

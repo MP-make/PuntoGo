@@ -39,9 +39,9 @@ export default function Register() {
         <Image 
           src="/PuntoGo logo sinfondo.png" 
           alt="PuntoGo" 
-          width={120} 
-          height={45}
-          className="object-contain sm:w-[140px] sm:h-[52px] md:w-[160px] md:h-[60px]"
+          width={180} 
+          height={67}
+          className="object-contain sm:w-[200px] sm:h-[75px] md:w-[220px] md:h-[82px]"
         />
       </Link>
       <div className="min-h-screen flex flex-col md:flex-row">

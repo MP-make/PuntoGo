@@ -176,50 +176,153 @@ export default function Profile() {
                   </div>
                 ) : (
                   <div className="space-y-4 sm:space-y-6">
+                    {/* Teléfono */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Teléfono / Celular *</label>
-                      <input
-                        type="tel"
-                        value={telefono}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, '');
-                          if (value.length > 9) return;
-                          setTelefono(value);
-                          if (value.length === 9 && !value.startsWith('9')) {
-                            setPhoneError('El número debe empezar con 9');
-                          } else if (value.length > 0 && value.length < 9) {
-                            setPhoneError('Debe tener exactamente 9 dígitos');
-                          } else {
-                            setPhoneError(null);
-                          }
-                        }}
-                        maxLength={9}
-                        placeholder="9XXXXXXXX"
-                        className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base ${phoneError ? 'border-red-500' : 'border-gray-300'}`}
-                      />
-                      {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
+                      <label className="block text-sm font-medium text-gray-700 mb-3">Teléfono / Celular</label>
+                      
+                      {user.phone && (
+                        <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                          <p className="text-sm text-gray-700">Actual: <strong>{user.phone}</strong></p>
+                        </div>
+                      )}
+                      
+                      <div className="space-y-3">
+                        <label className="flex items-center gap-3 p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                          <input
+                            type="radio"
+                            name="phoneAction"
+                            value="keep"
+                            checked={phoneAction === 'keep'}
+                            onChange={(e) => setPhoneAction(e.target.value as any)}
+                            className="w-4 h-4"
+                          />
+                          <span className="text-sm">Mantener número actual</span>
+                        </label>
+                        
+                        <label className="flex items-center gap-3 p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                          <input
+                            type="radio"
+                            name="phoneAction"
+                            value="new"
+                            checked={phoneAction === 'new'}
+                            onChange={(e) => setPhoneAction(e.target.value as any)}
+                            className="w-4 h-4"
+                          />
+                          <span className="text-sm">{user.phone ? 'Cambiar a un número nuevo' : 'Agregar número'}</span>
+                        </label>
+                        
+                        {user.phone && (
+                          <label className="flex items-center gap-3 p-3 border border-red-300 rounded-lg cursor-pointer hover:bg-red-50">
+                            <input
+                              type="radio"
+                              name="phoneAction"
+                              value="delete"
+                              checked={phoneAction === 'delete'}
+                              onChange={(e) => setPhoneAction(e.target.value as any)}
+                              className="w-4 h-4"
+                            />
+                            <span className="text-sm text-red-600">Eliminar número</span>
+                          </label>
+                        )}
+                      </div>
+                      
+                      {phoneAction === 'new' && (
+                        <div className="mt-3">
+                          <input
+                            type="tel"
+                            value={telefono}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/\D/g, '');
+                              if (value.length > 9) return;
+                              setTelefono(value);
+                              if (value.length === 9 && !value.startsWith('9')) {
+                                setPhoneError('El número debe empezar con 9');
+                              } else if (value.length > 0 && value.length < 9) {
+                                setPhoneError('Debe tener exactamente 9 dígitos');
+                              } else {
+                                setPhoneError(null);
+                              }
+                            }}
+                            maxLength={9}
+                            placeholder="9XXXXXXXX"
+                            className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base ${phoneError ? 'border-red-500' : 'border-gray-300'}`}
+                          />
+                          {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
+                        </div>
+                      )}
                     </div>
 
+                    {/* Dirección */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Dirección Exacta</label>
-                      <textarea
-                        value={direccion}
-                        onChange={(e) => setDireccion(e.target.value)}
-                        placeholder="Ej: Av. Principal 123, San Isidro"
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
-                        rows={3}
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Referencia (Opcional)</label>
-                      <input
-                        type="text"
-                        value={referencia}
-                        onChange={(e) => setReferencia(e.target.value)}
-                        placeholder="Ej: Casa de dos pisos, portón negro"
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
-                      />
+                      <label className="block text-sm font-medium text-gray-700 mb-3">Dirección de Entrega</label>
+                      
+                      {user.savedAddress && (
+                        <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                          <p className="text-sm text-gray-700">
+                            Actual: <strong>{user.savedAddress}</strong>
+                            {user.reference && <span className="block text-gray-600 mt-1">Ref: {user.reference}</span>}
+                          </p>
+                        </div>
+                      )}
+                      
+                      <div className="space-y-3">
+                        <label className="flex items-center gap-3 p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                          <input
+                            type="radio"
+                            name="addressAction"
+                            value="keep"
+                            checked={addressAction === 'keep'}
+                            onChange={(e) => setAddressAction(e.target.value as any)}
+                            className="w-4 h-4"
+                          />
+                          <span className="text-sm">Mantener dirección actual</span>
+                        </label>
+                        
+                        <label className="flex items-center gap-3 p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                          <input
+                            type="radio"
+                            name="addressAction"
+                            value="new"
+                            checked={addressAction === 'new'}
+                            onChange={(e) => setAddressAction(e.target.value as any)}
+                            className="w-4 h-4"
+                          />
+                          <span className="text-sm">{user.savedAddress ? 'Cambiar a una dirección nueva' : 'Agregar dirección'}</span>
+                        </label>
+                        
+                        {user.savedAddress && (
+                          <label className="flex items-center gap-3 p-3 border border-red-300 rounded-lg cursor-pointer hover:bg-red-50">
+                            <input
+                              type="radio"
+                              name="addressAction"
+                              value="delete"
+                              checked={addressAction === 'delete'}
+                              onChange={(e) => setAddressAction(e.target.value as any)}
+                              className="w-4 h-4"
+                            />
+                            <span className="text-sm text-red-600">Eliminar dirección</span>
+                          </label>
+                        )}
+                      </div>
+                      
+                      {addressAction === 'new' && (
+                        <div className="mt-3 space-y-3">
+                          <textarea
+                            value={direccion}
+                            onChange={(e) => setDireccion(e.target.value)}
+                            placeholder="Ej: Av. Principal 123, San Isidro"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                            rows={3}
+                          />
+                          <input
+                            type="text"
+                            value={referencia}
+                            onChange={(e) => setReferencia(e.target.value)}
+                            placeholder="Referencia (Opcional): Ej: Casa de dos pisos, portón negro"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                          />
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -231,7 +334,11 @@ export default function Profile() {
                         Guardar Cambios
                       </button>
                       <button 
-                        onClick={() => setIsEditing(false)} 
+                        onClick={() => {
+                          setIsEditing(false);
+                          setPhoneAction('keep');
+                          setAddressAction('keep');
+                        }} 
                         className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-bold hover:bg-gray-300 transition-colors text-sm sm:text-base"
                       >
                         Cancelar

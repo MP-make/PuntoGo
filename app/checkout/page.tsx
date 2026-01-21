@@ -68,7 +68,7 @@ const CheckoutPage: React.FC = () => {
     // VALIDAR PAGO DIGITAL: Debe tener número de operación O comprobante
     if (metodoPago === 'DIGITAL') {
       if (!nroOperacion.trim() && !comprobanteFile) {
-        setError('Para pago digital debes ingresar el número de operación o adjuntar una captura.');
+        setError('⚠️ Para pago digital debes ingresar el número de operación o adjuntar una captura.');
         return;
       }
     }
@@ -319,8 +319,11 @@ const CheckoutPage: React.FC = () => {
                   </div>
 
                   {metodoPago === 'DIGITAL' && (
-                    <div className="mt-4 p-3 sm:p-4 bg-yellow-50 rounded-lg">
-                      <h4 className="font-semibold mb-2 text-sm sm:text-base">Escanea el QR con Yape o Plin</h4>
+                    <div className="mt-4 p-3 sm:p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                      <h4 className="font-semibold mb-2 text-sm sm:text-base flex items-center gap-2">
+                        <span>⚠️</span>
+                        Escanea el QR con Yape o Plin
+                      </h4>
                       <div className="bg-white p-3 sm:p-4 rounded mb-3 sm:mb-4 text-center">
                         <img
                           src="/Yape-MarlonPecho.png"
@@ -328,17 +331,35 @@ const CheckoutPage: React.FC = () => {
                           className="mx-auto w-40 h-40 sm:w-48 sm:h-48 object-contain"
                         />
                       </div>
+                      
+                      {/* MENSAJE DE ADVERTENCIA OBLIGATORIO */}
+                      <div className="bg-orange-50 border-l-4 border-orange-500 p-3 mb-3 rounded">
+                        <p className="text-xs sm:text-sm text-orange-800 font-semibold flex items-start gap-2">
+                          <span className="text-base sm:text-lg">⚠️</span>
+                          <span>
+                            <strong>Obligatorio:</strong> Debes ingresar el número de operación o adjuntar una captura del comprobante de pago para procesar tu pedido.
+                          </span>
+                        </p>
+                      </div>
+                      
                       <div className="space-y-2">
                         <input
                           type="text"
                           value={nroOperacion}
                           onChange={(e) => setNroOperacion(e.target.value)}
-                          placeholder="Nro de Operación / Captura"
-                          className="w-full p-2 sm:p-3 border border-gray-300 rounded text-sm sm:text-base"
+                          placeholder="Nro de Operación / Captura *"
+                          className={`w-full p-2 sm:p-3 border rounded text-sm sm:text-base ${
+                            metodoPago === 'DIGITAL' && !nroOperacion && !comprobanteFile 
+                              ? 'border-orange-500 bg-orange-50' 
+                              : 'border-gray-300'
+                          }`}
                         />
-                        <label htmlFor="comprobante" className="inline-block px-3 sm:px-4 py-2 bg-gray-200 text-gray-700 rounded cursor-pointer hover:bg-gray-300 transition-colors text-sm sm:text-base">
-                          Adjuntar Comprobante
-                        </label>
+                        <div className="flex items-center gap-2">
+                          <label htmlFor="comprobante" className="inline-block px-3 sm:px-4 py-2 bg-gray-200 text-gray-700 rounded cursor-pointer hover:bg-gray-300 transition-colors text-sm sm:text-base flex-shrink-0">
+                            📷 Adjuntar Comprobante
+                          </label>
+                          <span className="text-xs text-gray-500 italic">o ingresa el número arriba</span>
+                        </div>
                         <input
                           id="comprobante"
                           type="file"
@@ -347,10 +368,11 @@ const CheckoutPage: React.FC = () => {
                           className="hidden"
                         />
                         {previewUrl && (
-                          <div className="bg-green-50 p-3 sm:p-4 rounded-lg flex items-center space-x-3 sm:space-x-4">
+                          <div className="bg-green-50 p-3 sm:p-4 rounded-lg flex items-center space-x-3 sm:space-x-4 border border-green-300">
                             <img src={previewUrl} alt="Comprobante" className="max-h-24 sm:max-h-36 rounded" />
                             <div className="flex-1">
-                              <p className="text-xs sm:text-sm text-gray-700 break-all">{comprobanteFile?.name}</p>
+                              <p className="text-xs sm:text-sm text-gray-700 break-all font-medium">✅ {comprobanteFile?.name}</p>
+                              <p className="text-xs text-green-600 mt-1">Comprobante cargado correctamente</p>
                             </div>
                             <button onClick={handleRemoveFile} className="text-red-500 hover:text-red-700 flex-shrink-0 text-lg sm:text-xl font-bold">×</button>
                           </div>
