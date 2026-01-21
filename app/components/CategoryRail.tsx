@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Beer, Wine, Cigarette, Martini, Package } from 'lucide-react';
+import { Beer, Wine, Cigarette, Martini, Package, Sun } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 interface Category {
@@ -16,7 +16,7 @@ interface CategoryRailProps {
 const categories: Category[] = [
   { name: 'Cervezas', icon: Beer },
   { name: 'Vinos', icon: Wine },
-  { name: 'Whiskys', icon: Martini },
+  { name: 'Calor', icon: Sun },
   { name: 'Licores', icon: Martini },
   { name: 'Snacks', icon: Package },
   { name: 'Cigarros', icon: Cigarette },
@@ -36,20 +36,20 @@ const CategoryRail: React.FC<CategoryRailProps> = ({ className }) => {
   };
 
   return (
-    <div className={`overflow-x-auto scrollbar-hide py-4 ${className}`}>
-      <div className="flex flex-wrap justify-center gap-4 px-4">
+    <div className={`overflow-x-auto scrollbar-hide py-3 sm:py-4 ${className}`}>
+      <div className="flex justify-start sm:justify-center gap-3 sm:gap-4 px-3 sm:px-4 min-w-max sm:min-w-0 sm:flex-wrap">
         {categories.map((category, index) => {
           const Icon = category.icon;
           const isActive = activeCategory === category.name;
           return (
-            <div key={index} className="flex flex-col items-center space-y-2">
+            <div key={index} className="flex flex-col items-center space-y-1 sm:space-y-2 flex-shrink-0">
               <div
                 onClick={() => handleCategoryClick(category.name)}
-                className={`w-20 h-20 rounded-full border-2 transition-colors flex items-center justify-center cursor-pointer ${isActive ? 'border-blue-600 bg-blue-600' : 'border-gray-300 hover:border-blue-500'}`}
+                className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 transition-all flex items-center justify-center cursor-pointer ${isActive ? 'border-blue-600 bg-blue-600 shadow-lg scale-105' : 'border-gray-300 hover:border-blue-500 hover:scale-105'}`}
               >
-                <Icon className={`h-8 w-8 ${isActive ? 'text-white' : 'text-gray-600'}`} />
+                <Icon className={`h-6 w-6 sm:h-8 sm:w-8 ${isActive ? 'text-white' : 'text-gray-600'}`} />
               </div>
-              <span className={`text-xs text-center ${isActive ? 'text-blue-600 font-medium' : 'text-gray-700'}`}>{category.name}</span>
+              <span className={`text-xs sm:text-sm text-center whitespace-nowrap ${isActive ? 'text-blue-600 font-medium' : 'text-gray-700'}`}>{category.name}</span>
             </div>
           );
         })}

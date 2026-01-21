@@ -80,8 +80,8 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ className }) => {
         </div>
       ))}
 
-      {/* Dot Indicators */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 z-30">
+      {/* Dot Indicators - Solo en desktop */}
+      <div className="hidden md:flex absolute bottom-8 left-1/2 transform -translate-x-1/2 space-x-2 z-30">
         {slides.map((_, index) => (
           <button
             key={index}

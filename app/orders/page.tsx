@@ -9,7 +9,7 @@ const orders = [
   { id: 1237, date: '5 Ene 2026', total: 'S/ 67.30', status: 'En Revisión', steps: ['En Revisión'] },
 ];
 
-const getStepColor = (step, status) => {
+const getStepColor = (step: string, status: string) => {
   const allSteps = ['En Revisión', 'Confirmado', 'En Camino', 'Entregado'];
   const statusIndex = allSteps.indexOf(status);
   const stepIndex = allSteps.indexOf(step);
@@ -23,7 +23,7 @@ const getStepColor = (step, status) => {
   return 'bg-gray-300';
 };
 
-const getStepText = (step) => {
+const getStepText = (step: string) => {
   if (step === 'En Revisión') return 'Validando Yape';
   if (step === 'Confirmado') return 'Pago Aceptado';
   if (step === 'En Camino') return 'Motorizado asignado';
@@ -31,7 +31,7 @@ const getStepText = (step) => {
   return step;
 };
 
-const getProgressWidth = (status) => {
+const getProgressWidth = (status: string) => {
   switch(status) {
     case 'En Revisión': return '10%';
     case 'Confirmado': return '50%';
@@ -41,7 +41,7 @@ const getProgressWidth = (status) => {
   }
 };
 
-const getProgressColor = (status) => {
+const getProgressColor = (status: string) => {
   switch(status) {
     case 'En Revisión': return 'bg-yellow-500';
     case 'Confirmado': return 'bg-blue-500';
@@ -51,7 +51,7 @@ const getProgressColor = (status) => {
   }
 };
 
-const getStatusColor = (status) => {
+const getStatusColor = (status: string) => {
   switch(status) {
     case 'En Revisión': return 'text-yellow-600';
     case 'Confirmado': return 'text-blue-600';

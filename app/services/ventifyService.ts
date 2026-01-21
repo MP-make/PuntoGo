@@ -25,16 +25,20 @@ interface VentifyOrderPayload {
 
 interface VentifyOrderResponse {
   success: boolean;
+  id?: string; // ID de la solicitud de venta (#SR-XXXXXX)
+  saleRequestId?: string;
   order_id?: string;
   external_id?: string;
   message?: string;
   error?: string;
+  data?: any; // Datos adicionales de la respuesta
 }
 
 interface VentifyProduct {
   id: string;
   name: string;
   price: number;
+  imageUrl?: string; // Campo correcto que devuelve Ventify
   image?: string;
   category?: string;
   description?: string;

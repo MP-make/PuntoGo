@@ -37,8 +37,8 @@ export default async function Home({ searchParams }: HomeProps) {
       id: prod.id,
       title: prod.name,
       price: prod.price,
-      originalPrice: prod.originalPrice || undefined, // Mostrar originalPrice si existe, aunque sea igual
-      image: prod.imageUrl || '/placeholder-product.png',
+      originalPrice: prod.originalPrice || undefined,
+      image: prod.imageUrl || prod.image || '/placeholder-product.png', // Usar imageUrl primero
       rating: prod.rating || 4.5,
       category: prod.category || 'General',
       description: prod.description || '',
@@ -80,55 +80,55 @@ export default async function Home({ searchParams }: HomeProps) {
       {/* Ocultamos Carrusel y Categorías grandes si estamos filtrando */}
       {!isFiltering && (
         <>
-          <HeroCarousel className="mb-8" />
-          <CategoryRail className="mb-8" />
+          <HeroCarousel className="mb-6 sm:mb-8" />
+          <CategoryRail className="mb-6 sm:mb-8" />
         </>
       )}
 
       {/* Mostramos botón de volver si hay filtros */}
       {isFiltering && (
-        <div className="max-w-7xl mx-auto px-4 mt-6">
-           <a href="/" className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline transition-colors">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 mt-4 sm:mt-6">
+           <a href="/" className="inline-flex items-center text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline transition-colors">
              ← Volver al Inicio
            </a>
            {/* Categorías pequeñas para facilitar navegación */}
-           <div className="mt-4 scale-90 origin-left">
+           <div className="mt-3 sm:mt-4 scale-90 origin-left">
              <CategoryRail />
            </div>
         </div>
       )}
 
-      <main id="catalogo" className="max-w-7xl mx-auto p-4 mt-4">
+      <main id="catalogo" className="max-w-7xl mx-auto p-3 sm:p-4 mt-3 sm:mt-4">
         {products.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 bg-white rounded-2xl shadow-sm border border-gray-100 text-center">
-            <div className="text-6xl mb-4">📦</div>
-            <h3 className="text-2xl font-bold text-slate-800 mb-2">Cargando productos...</h3>
-            <p className="text-gray-500 max-w-md mx-auto">
+          <div className="flex flex-col items-center justify-center py-16 sm:py-24 bg-white rounded-2xl shadow-sm border border-gray-100 text-center">
+            <div className="text-5xl sm:text-6xl mb-4">📦</div>
+            <h3 className="text-xl sm:text-2xl font-bold text-slate-800 mb-2">Cargando productos...</h3>
+            <p className="text-sm sm:text-base text-gray-500 max-w-md mx-auto px-4">
               Estamos obteniendo los productos más frescos de nuestro catálogo.
             </p>
           </div>
         ) : filteredProducts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 bg-white rounded-2xl shadow-sm border border-gray-100 text-center">
-            <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-2xl font-bold text-slate-800 mb-2">No encontramos ese producto</h3>
-            <p className="text-gray-500 max-w-md mx-auto mb-8">
+          <div className="flex flex-col items-center justify-center py-16 sm:py-24 bg-white rounded-2xl shadow-sm border border-gray-100 text-center">
+            <div className="text-5xl sm:text-6xl mb-4">🔍</div>
+            <h3 className="text-xl sm:text-2xl font-bold text-slate-800 mb-2">No encontramos ese producto</h3>
+            <p className="text-sm sm:text-base text-gray-500 max-w-md mx-auto mb-6 sm:mb-8 px-4">
               No hay coincidencias para "{search || category}". Intenta buscar otros términos.
             </p>
             <a 
               href="/" 
-              className="px-8 py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition-all shadow-lg"
+              className="px-6 sm:px-8 py-2 sm:py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition-all shadow-lg text-sm sm:text-base"
             >
               Ver todo el catálogo
             </a>
           </div>
         ) : (
           <>
-            <div className="flex items-end gap-3 mb-8 border-b border-gray-200 pb-4">
-              <h2 className="text-3xl font-black text-slate-900 tracking-tight capitalize">{title}</h2>
-              <span className="text-gray-500 font-medium mb-1.5 text-lg">• {filteredProducts.length} productos</span>
+            <div className="flex flex-col sm:flex-row sm:items-end gap-2 sm:gap-3 mb-6 sm:mb-8 border-b border-gray-200 pb-3 sm:pb-4">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight capitalize">{title}</h2>
+              <span className="text-gray-500 font-medium text-base sm:text-lg">• {filteredProducts.length} productos</span>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
               {filteredProducts.map((prod) => (
                 <ProductCard
                   key={prod.id}

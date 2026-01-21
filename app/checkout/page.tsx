@@ -110,9 +110,14 @@ const CheckoutPage: React.FC = () => {
       
       if (response.success) {
         console.log('✅ Orden enviada exitosamente a Ventify:', response);
-        // Actualizar el ID de la orden con el de Ventify si lo devuelve
-        if (response.order_id) {
-          solicitud.id = response.order_id;
+        
+        // Actualizar el ID de la orden con el de Ventify
+        // La API puede devolver el ID en diferentes campos
+        const ventifyId = response.id || response.saleRequestId || response.order_id || response.data?.id;
+        
+        if (ventifyId) {
+          solicitud.id = ventifyId;
+          console.log('✅ ID de Ventify capturado:', ventifyId);
           localStorage.setItem('lastOrder', JSON.stringify(solicitud));
         }
       } else {
@@ -133,17 +138,17 @@ const CheckoutPage: React.FC = () => {
 
   return (
     <>
-      <div className="bg-gray-50 min-h-screen">
-        <div className="max-w-6xl mx-auto py-10 px-4">
-          <h1 className="text-3xl font-bold mb-8 text-center">Checkout</h1>
+      <div className="bg-gray-50 min-h-screen pb-16 sm:pb-0">
+        <div className="max-w-6xl mx-auto py-6 sm:py-10 px-3 sm:px-4 lg:px-6">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">Checkout</h1>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
             {/* Columna Izquierda: Formulario */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <h2 className="text-2xl font-semibold mb-6">Datos para tu Solicitud</h2>
-                {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
-                <form className="space-y-6">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">Datos para tu Solicitud</h2>
+                {error && <div className="bg-red-100 border border-red-400 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded mb-4 text-sm">{error}</div>}
+                <form className="space-y-4 sm:space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Nombre Completo *</label>
                     <input
@@ -273,44 +278,41 @@ const CheckoutPage: React.FC = () => {
                   </div>
                 </form>
 
-                <div className="mt-8">
-                  <h3 className="text-xl font-semibold mb-4">Método de Pago</h3>
+                <div className="mt-6 sm:mt-8">
+                  <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Método de Pago</h3>
                   <div className="space-y-3">
-                    <label className={`flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 ${metodoPago === 'DIGITAL' ? 'border-blue-600 ring-1 ring-blue-600 bg-blue-50' : 'border-gray-300'}`}>
+                    <label className={`flex items-center p-3 sm:p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${metodoPago === 'DIGITAL' ? 'border-blue-600 ring-1 ring-blue-600 bg-blue-50' : 'border-gray-300'}`}>
                       <input
                         type="radio"
                         name="payment"
                         value="DIGITAL"
                         checked={metodoPago === 'DIGITAL'}
                         onChange={() => setMetodoPago('DIGITAL')}
-                        className="mr-3"
+                        className="mr-3 flex-shrink-0"
                       />
-                      <span className="font-medium">Pago Digital (Yape/Plin)</span>
+                      <span className="font-medium text-sm sm:text-base">Pago Digital (Yape/Plin)</span>
                     </label>
-                    <label className={`flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 ${metodoPago === 'EFECTIVO' ? 'border-blue-600 ring-1 ring-blue-600 bg-blue-50' : 'border-gray-300'}`}>
+                    <label className={`flex items-center p-3 sm:p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${metodoPago === 'EFECTIVO' ? 'border-blue-600 ring-1 ring-blue-600 bg-blue-50' : 'border-gray-300'}`}>
                       <input
                         type="radio"
                         name="payment"
                         value="EFECTIVO"
                         checked={metodoPago === 'EFECTIVO'}
                         onChange={() => setMetodoPago('EFECTIVO')}
-                        className="mr-3"
+                        className="mr-3 flex-shrink-0"
                       />
-                      <span className="font-medium">Pago contra Entrega</span>
+                      <span className="font-medium text-sm sm:text-base">Pago contra Entrega</span>
                     </label>
                   </div>
 
                   {metodoPago === 'DIGITAL' && (
-                    <div className="mt-4 p-4 bg-yellow-50 rounded-lg">
-                      <h4 className="font-semibold mb-2">Escanea el QR con Yape o Plin</h4>
-                      <div className="bg-white p-4 rounded mb-4 text-center">
-                        {/* Asegúrate de que esta imagen exista en public/ */}
+                    <div className="mt-4 p-3 sm:p-4 bg-yellow-50 rounded-lg">
+                      <h4 className="font-semibold mb-2 text-sm sm:text-base">Escanea el QR con Yape o Plin</h4>
+                      <div className="bg-white p-3 sm:p-4 rounded mb-3 sm:mb-4 text-center">
                         <img
                           src="/Yape-MarlonPecho.png"
                           alt="QR Yape"
-                          width={200}
-                          height={200}
-                          className="mx-auto"
+                          className="mx-auto w-40 h-40 sm:w-48 sm:h-48 object-contain"
                         />
                       </div>
                       <div className="space-y-2">
@@ -319,9 +321,9 @@ const CheckoutPage: React.FC = () => {
                           value={nroOperacion}
                           onChange={(e) => setNroOperacion(e.target.value)}
                           placeholder="Nro de Operación / Captura"
-                          className="w-full p-2 border border-gray-300 rounded"
+                          className="w-full p-2 sm:p-3 border border-gray-300 rounded text-sm sm:text-base"
                         />
-                        <label htmlFor="comprobante" className="inline-block px-4 py-2 bg-gray-200 text-gray-700 rounded cursor-pointer hover:bg-gray-300 transition-colors">
+                        <label htmlFor="comprobante" className="inline-block px-3 sm:px-4 py-2 bg-gray-200 text-gray-700 rounded cursor-pointer hover:bg-gray-300 transition-colors text-sm sm:text-base">
                           Adjuntar Comprobante
                         </label>
                         <input
@@ -332,12 +334,12 @@ const CheckoutPage: React.FC = () => {
                           className="hidden"
                         />
                         {previewUrl && (
-                          <div className="bg-green-50 p-4 rounded-lg flex items-center space-x-4">
-                            <img src={previewUrl} alt="Comprobante" className="max-h-36 rounded" />
+                          <div className="bg-green-50 p-3 sm:p-4 rounded-lg flex items-center space-x-3 sm:space-x-4">
+                            <img src={previewUrl} alt="Comprobante" className="max-h-24 sm:max-h-36 rounded" />
                             <div className="flex-1">
-                              <p className="text-sm text-gray-700">{comprobanteFile?.name}</p>
+                              <p className="text-xs sm:text-sm text-gray-700 break-all">{comprobanteFile?.name}</p>
                             </div>
-                            <button onClick={handleRemoveFile} className="text-red-500 hover:text-red-700">X</button>
+                            <button onClick={handleRemoveFile} className="text-red-500 hover:text-red-700 flex-shrink-0 text-lg sm:text-xl font-bold">×</button>
                           </div>
                         )}
                       </div>
@@ -345,41 +347,41 @@ const CheckoutPage: React.FC = () => {
                   )}
 
                   {metodoPago === 'EFECTIVO' && (
-                    <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-                      <p className="text-sm">Paga en efectivo o con tarjeta al momento de la entrega. Nuestro repartidor llevará el POS.</p>
+                    <div className="mt-4 p-3 sm:p-4 bg-blue-50 rounded-lg">
+                      <p className="text-xs sm:text-sm">Paga en efectivo o con tarjeta al momento de la entrega. Nuestro repartidor llevará el POS.</p>
                     </div>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Columna Derecha: Resumen */}
+            {/* Columna Derecha: Resumen - Sticky solo en desktop */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-4">
-                <h3 className="text-lg font-semibold mb-4">Resumen del Pedido</h3>
-                <div className="space-y-3 mb-4">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:sticky lg:top-4">
+                <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Resumen del Pedido</h3>
+                <div className="space-y-2 sm:space-y-3 mb-3 sm:mb-4 max-h-48 sm:max-h-64 overflow-y-auto">
                   {cart.map((item) => (
-                    <div key={item.product.id} className="flex items-center space-x-3">
+                    <div key={item.product.id} className="flex items-center space-x-2 sm:space-x-3">
                       <img
                         src={item.product.image}
                         alt={item.product.title}
-                        className="w-12 h-12 rounded-md object-cover"
+                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-md object-cover flex-shrink-0"
                       />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">{item.product.title}</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm font-medium truncate">{item.product.title}</p>
                         <p className="text-xs text-gray-500">{item.quantity} x S/ {item.product.price}</p>
                       </div>
                     </div>
                   ))}
                 </div>
-                <hr className="border-gray-200 mb-4" />
-                <div className="flex justify-between items-center mb-6">
-                  <span className="text-lg font-semibold">Total</span>
-                  <span className="text-2xl font-bold text-gray-900">S/ {totalAmount}</span>
+                <hr className="border-gray-200 mb-3 sm:mb-4" />
+                <div className="flex justify-between items-center mb-4 sm:mb-6">
+                  <span className="text-base sm:text-lg font-semibold">Total</span>
+                  <span className="text-xl sm:text-2xl font-bold text-gray-900">S/ {totalAmount}</span>
                 </div>
                 <button
                   onClick={() => user ? handleGenerateRequest() : setShowAuthModal(true)}
-                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-bold text-lg shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all"
+                  className="w-full py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-bold text-sm sm:text-lg shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all"
                 >
                   Generar Solicitud
                 </button>
@@ -388,28 +390,32 @@ const CheckoutPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal de autenticación - Mobile optimized */}
       {showAuthModal && (
-        <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md mx-4 z-50 animate-in fade-in zoom-in duration-300">
-            <div className="text-center mb-6">
-              <div className="text-6xl mb-4">🎁</div>
-              <h2 className="text-3xl font-bold">¡Espera!</h2>
+        <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 max-w-md w-full z-50 animate-in fade-in zoom-in duration-300">
+            <div className="text-center mb-4 sm:mb-6">
+              <div className="text-5xl sm:text-6xl mb-3 sm:mb-4">🎁</div>
+              <h2 className="text-2xl sm:text-3xl font-bold">¡Espera!</h2>
             </div>
-            <p className="text-gray-700 mb-8 text-center">¿Quieres guardar este pedido y ganar puntos? Regístrate o Inicia Sesión para acceder a ofertas exclusivas y seguimiento en tiempo real. Si continúas como invitado, el pedido no quedará en tu historial.</p>
-            <div className="space-y-4">
-              <Link href="/login" className="block w-full py-4 bg-blue-600 text-white text-center rounded-lg font-semibold hover:bg-blue-700 text-lg">Iniciar Sesión</Link>
-              <Link href="/register" className="block w-full py-4 bg-green-600 text-white text-center rounded-lg font-semibold hover:bg-green-700 text-lg">Registrarse</Link>
+            <p className="text-sm sm:text-base text-gray-700 mb-6 sm:mb-8 text-center">¿Quieres guardar este pedido y ganar puntos? Regístrate o Inicia Sesión para acceder a ofertas exclusivas y seguimiento en tiempo real. Si continúas como invitado, el pedido no quedará en tu historial.</p>
+            <div className="space-y-3 sm:space-y-4">
+              <Link href="/login" className="block w-full py-3 sm:py-4 bg-blue-600 text-white text-center rounded-lg font-semibold hover:bg-blue-700 text-sm sm:text-lg transition-colors">Iniciar Sesión</Link>
+              <Link href="/register" className="block w-full py-3 sm:py-4 bg-green-600 text-white text-center rounded-lg font-semibold hover:bg-green-700 text-sm sm:text-lg transition-colors">Registrarse</Link>
             </div>
-            <div className="text-center mt-6">
-              <button onClick={() => { setShowAuthModal(false); handleGenerateRequest(); }} className="text-gray-500 underline hover:text-gray-700">Continuar como Invitado</button>
+            <div className="text-center mt-4 sm:mt-6">
+              <button onClick={() => { setShowAuthModal(false); handleGenerateRequest(); }} className="text-sm sm:text-base text-gray-500 underline hover:text-gray-700">Continuar como Invitado</button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Loading overlay */}
       {isProcessing && (
-        <div className="fixed inset-0 z-[9999] bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center">
-          <div className="animate-spin rounded-full h-40 w-40 border-b-4 border-blue-600 mb-6"></div>
-          <p className="text-2xl font-bold text-gray-800">Procesando tu pedido con PuntoGo...</p>
+        <div className="fixed inset-0 z-[9999] bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-4">
+          <div className="animate-spin rounded-full h-32 w-32 sm:h-40 sm:w-40 border-b-4 border-blue-600 mb-4 sm:mb-6"></div>
+          <p className="text-xl sm:text-2xl font-bold text-gray-800 text-center">Procesando tu pedido con PuntoGo...</p>
         </div>
       )}
     </>
