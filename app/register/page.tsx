@@ -37,7 +37,7 @@ export default function Register() {
     <>
       <Link href="/" className="absolute top-6 right-6 z-[100]" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
         <Image 
-          src="/PuntoGo logo.png" 
+          src="/PuntoGo logo sinfondo.png" 
           alt="PuntoGo" 
           width={100} 
           height={35}

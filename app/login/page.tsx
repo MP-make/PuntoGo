@@ -26,7 +26,7 @@ export default function Login() {
     <>
       <Link href="/" className="absolute top-4 left-4 z-50">
         <Image 
-          src="/PuntoGo logo.png" 
+          src="/PuntoGo logo sinfondo.png" 
           alt="PuntoGo" 
           width={100} 
           height={35}
