@@ -5,6 +5,7 @@ import { useCart } from '../contexts/CartContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../contexts/AuthContext';
+import { createVentifyOrder, generateOrderId } from '../services/ventifyService';
 
 const CheckoutPage: React.FC = () => {
   const { cart, totalAmount, clearCart } = useCart();
@@ -50,7 +51,7 @@ const CheckoutPage: React.FC = () => {
     if (input) input.value = '';
   };
 
-  const handleGenerateRequest = () => {
+  const handleGenerateRequest = async () => {
     setError(null);
     const finalTelefono = user && selectedPhone === 'saved' ? (user.phone || '') : telefono;
 
@@ -66,6 +67,9 @@ const CheckoutPage: React.FC = () => {
 
     const finalDireccion = user && selectedAddress === 'saved' ? `${user.savedAddress}${user.reference ? ` (${user.reference})` : ''}` : direccion;
 
+    // Generar ID único para la orden
+    const orderId = generateOrderId();
+
     const solicitud = {
       id: `B001-${Math.floor(Math.random() * 100000).toString().padStart(6, '0')}`,
       date: new Date().toLocaleString('es-PE', { dateStyle: 'short', timeStyle: 'short' }),
@@ -76,13 +80,57 @@ const CheckoutPage: React.FC = () => {
       estado: 'PENDIENTE'
     };
 
-    console.log(solicitud);
+    console.log('📦 Solicitud generada:', solicitud);
 
-    // GUARDAR EN LOCALSTORAGE PARA QUE SUCCESS LO LEA
+    // GUARDAR EN LOCALSTORAGE (respaldo para la página de éxito)
     localStorage.setItem('lastOrder', JSON.stringify(solicitud));
 
     setIsProcessing(true);
 
+    // Preparar payload para la API de Ventify
+    const ventifyPayload = {
+      external_id: orderId,
+      customer: {
+        name: nombre,
+        phone: finalTelefono,
+        email: user?.email,
+        address: finalDireccion,
+      },
+      items: cart.map(item => ({
+        product_id: item.product.id,
+        name: item.product.title,
+        price: item.product.price,
+        quantity: item.quantity,
+      })),
+      total: parseFloat(totalAmount.toFixed(2)),
+      payment_method: metodoPago === 'DIGITAL' ? 'YAPE_PLIN' : 'CASH',
+      notes: metodoPago === 'DIGITAL' && nroOperacion 
+        ? `Operación: ${nroOperacion}` 
+        : undefined,
+    };
+
+    // Intentar enviar a la API de Ventify
+    try {
+      console.log('🚀 Enviando orden a Ventify...');
+      const response = await createVentifyOrder(ventifyPayload);
+      
+      if (response.success) {
+        console.log('✅ Orden enviada exitosamente a Ventify:', response);
+        // Actualizar el ID de la orden con el de Ventify si lo devuelve
+        if (response.order_id) {
+          solicitud.id = response.order_id;
+          localStorage.setItem('lastOrder', JSON.stringify(solicitud));
+        }
+      } else {
+        console.warn('⚠️ No se pudo enviar a Ventify, pero continuamos:', response.error);
+        // No mostramos error al usuario, la orden se procesa localmente como respaldo
+      }
+    } catch (error) {
+      console.error('❌ Error al conectar con Ventify:', error);
+      // Continuamos sin mostrar error - el localStorage servirá como respaldo
+    }
+
+    // Simular procesamiento y redirigir
     setTimeout(() => {
       clearCart();
       router.push(`/success?name=${encodeURIComponent(nombre)}`);
@@ -367,7 +415,7 @@ const CheckoutPage: React.FC = () => {
       {isProcessing && (
         <div className="fixed inset-0 z-[9999] bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center">
           <div className="animate-spin rounded-full h-40 w-40 border-b-4 border-blue-600 mb-6"></div>
-          <p className="text-2xl font-bold text-gray-800">Procesando tu pedido con Ventify...</p>
+          <p className="text-2xl font-bold text-gray-800">Procesando tu pedido con PuntoGo...</p>
         </div>
       )}
     </>

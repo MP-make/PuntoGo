@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 
@@ -23,14 +24,22 @@ export default function Login() {
 
   return (
     <>
-      <Link href="/" className="absolute top-4 left-4 z-50 text-xl font-bold text-white">Ventify Market</Link>
+      <Link href="/" className="absolute top-4 left-4 z-50">
+        <Image 
+          src="/PuntoGo logo.png" 
+          alt="PuntoGo" 
+          width={100} 
+          height={35}
+          className="object-contain"
+        />
+      </Link>
       <div className="min-h-screen flex">
         {/* Left Side - Image */}
         <div className="hidden md:flex md:w-1/2 bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80')" }}>
           <div className="bg-black/50 w-full flex items-center justify-center">
             <div className="text-white text-center px-8">
               <h2 className="text-4xl font-bold mb-4">Bienvenido de Vuelta</h2>
-              <p className="text-lg">"Descubre los mejores sabores en Ventify Market"</p>
+              <p className="text-lg">"Descubre los mejores sabores en PuntoGo"</p>
             </div>
           </div>
         </div>

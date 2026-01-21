@@ -128,12 +128,12 @@ export default function Success() {
           {/* Cabecera */}
           <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '2px solid black', paddingBottom: '20px', marginBottom: '30px' }}>
             <div>
-              <h1 style={{ fontSize: '28px', fontWeight: '900', margin: '0', textTransform: 'uppercase' }}>VENTIFY MARKET</h1>
+              <h1 style={{ fontSize: '28px', fontWeight: '900', margin: '0', textTransform: 'uppercase' }}>PUNTOGO</h1>
               <p style={{ margin: '5px 0', fontSize: '14px', color: '#333' }}>Venta de Bebidas Premium</p>
               <div style={{ fontSize: '12px', marginTop: '10px' }}>
                 <p style={{ margin: 0 }}>Av. La Marina 2000, Lima</p>
                 <p style={{ margin: 0 }}>Tel: (01) 555-1234</p>
-                <p style={{ margin: 0 }}>contacto@ventifymarket.com</p>
+                <p style={{ margin: 0 }}>contacto@puntogo.com</p>
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -213,7 +213,7 @@ export default function Success() {
 
           {/* Pie */}
           <div style={{ marginTop: '50px', borderTop: '1px solid #ccc', paddingTop: '10px', textAlign: 'center', fontSize: '11px', color: '#666' }}>
-            <p style={{ fontWeight: 'bold', margin: '0 0 5px 0' }}>Gracias por su compra en Ventify Market</p>
+            <p style={{ fontWeight: 'bold', margin: '0 0 5px 0' }}>Gracias por su compra en PuntoGo</p>
             <p style={{ margin: 0 }}>Representación impresa de la Boleta de Venta Electrónica</p>
             <p style={{ marginTop: '5px', fontFamily: 'monospace' }}>HASH: {order?.id?.replace(/-/g, '')}XYZ123</p>
           </div>

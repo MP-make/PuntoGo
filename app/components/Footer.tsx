@@ -17,7 +17,7 @@ const Footer = () => {
           
           {/* Col 1: Marca */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-black text-white tracking-tight">VENTIFY<span className="text-blue-500">.</span></h3>
+            <h3 className="text-2xl font-black text-white tracking-tight">PUNTOGO<span className="text-blue-500">.</span></h3>
             <p className="text-sm leading-relaxed text-gray-500">
               La plataforma líder en delivery de licores premium. Llevamos la celebración a tu puerta con seguridad y rapidez.
             </p>
@@ -70,7 +70,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded bg-gray-800 flex items-center justify-center text-blue-500">✉️</div>
-                <p className="text-gray-300 mt-1">contacto@ventify.com</p>
+                <p className="text-gray-300 mt-1">contacto@puntogo.com</p>
               </li>
             </ul>
           </div>
@@ -142,7 +142,7 @@ const Footer = () => {
       {/* Copyright (AL FINAL) */}
       <div className="bg-black py-3 text-center border-t border-gray-900">
         <p className="text-[10px] text-gray-600">
-          &copy; {currentYear} Ventify Market. Todos los derechos reservados.
+          &copy; {currentYear} PuntoGo. Todos los derechos reservados.
         </p>
       </div>
     </footer>

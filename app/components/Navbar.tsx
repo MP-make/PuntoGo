@@ -5,6 +5,7 @@ import { Search, User, ShoppingCart } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '../contexts/AuthContext';
 
 const Navbar: React.FC = () => {
@@ -37,7 +38,15 @@ const Navbar: React.FC = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex-shrink-0">
-              <Link href="/" className="text-xl font-bold text-blue-900">Ventify Market</Link>
+              <Link href="/" className="flex items-center">
+                <Image 
+                  src="/PuntoGo logo sinfondo.png" 
+                  alt="PuntoGo" 
+                  width={120} 
+                  height={40}
+                  className="object-contain"
+                />
+              </Link>
             </div>
 
             {/* Search Bar - Hidden on mobile, shown on md and up */}

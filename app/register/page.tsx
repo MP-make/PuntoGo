@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 
@@ -34,7 +35,15 @@ export default function Register() {
 
   return (
     <>
-      <Link href="/" className="absolute top-6 right-6 z-[100] text-xl font-bold text-white" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Ventify Market</Link>
+      <Link href="/" className="absolute top-6 right-6 z-[100]" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+        <Image 
+          src="/PuntoGo logo.png" 
+          alt="PuntoGo" 
+          width={100} 
+          height={35}
+          className="object-contain"
+        />
+      </Link>
       <div className="min-h-screen flex">
         {/* Left Side - Form */}
         <div className="w-full md:w-1/2 flex items-center justify-center p-8">
