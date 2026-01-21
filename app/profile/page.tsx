@@ -11,6 +11,8 @@ export default function Profile() {
   const { user, updateUser } = useAuth();
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
+  const [phoneAction, setPhoneAction] = useState<'keep' | 'new' | 'delete'>('keep');
+  const [addressAction, setAddressAction] = useState<'keep' | 'new' | 'delete'>('keep');
   const [telefono, setTelefono] = useState(user?.phone || '');
   const [direccion, setDireccion] = useState(user?.savedAddress || '');
   const [referencia, setReferencia] = useState(user?.reference || '');
@@ -23,21 +25,43 @@ export default function Profile() {
       setTelefono(user.phone || '');
       setDireccion(user.savedAddress || '');
       setReferencia(user.reference || '');
+      setPhoneAction('keep');
+      setAddressAction('keep');
     }
   }, [user, router]);
 
   if (!user) return null;
+
+  const handleSave = () => {
+    if (phoneError) return;
+    
+    const updates: any = {};
+    
+    // Manejar teléfono
+    if (phoneAction === 'delete') {
+      updates.phone = '';
+    } else if (phoneAction === 'new' && telefono) {
+      updates.phone = telefono;
+    }
+    
+    // Manejar dirección
+    if (addressAction === 'delete') {
+      updates.savedAddress = '';
+      updates.reference = '';
+    } else if (addressAction === 'new' && direccion) {
+      updates.savedAddress = direccion;
+      updates.reference = referencia;
+    }
+    
+    updateUser(updates);
+    setIsEditing(false);
+  };
 
   return (
     <>
       <Navbar />
       <div className="bg-gray-50 min-h-screen py-6 sm:py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Breadcrumb */}
-          <Link href="/" className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 mb-4 sm:mb-6">
-            ← Volver a la Tienda
-          </Link>
-
           {/* Header con avatar */}
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl shadow-xl p-6 sm:p-8 mb-6 sm:mb-8 text-white">
             <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
@@ -67,6 +91,12 @@ export default function Profile() {
                   <Link href="/orders" className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
                     <Package className="w-5 h-5" />
                     Mis Pedidos
+                  </Link>
+                  <Link href="/" className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors border-t border-gray-200 mt-4 pt-4">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Volver a la Tienda
                   </Link>
                 </nav>
               </div>
@@ -194,11 +224,7 @@ export default function Profile() {
 
                     <div className="flex flex-col sm:flex-row gap-3 pt-2">
                       <button 
-                        onClick={() => { 
-                          if (phoneError) return; 
-                          updateUser({ phone: telefono, savedAddress: direccion, reference: referencia }); 
-                          setIsEditing(false); 
-                        }} 
+                        onClick={handleSave} 
                         disabled={!!phoneError}
                         className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                       >

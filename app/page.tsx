@@ -33,6 +33,11 @@ export default async function Home({ searchParams }: HomeProps) {
 
   // 6. Mapear productos de Ventify al formato esperado por ProductCard
   const products = ventifyProducts.map(prod => {
+    // Calcular stock disponible (stock - reservado)
+    const physicalStock = prod.stock || 0;
+    const reserved = prod.reservedStock || 0;
+    const available = Math.max(0, physicalStock - reserved);
+    
     return {
       id: prod.id,
       title: prod.name,
@@ -42,6 +47,7 @@ export default async function Home({ searchParams }: HomeProps) {
       rating: prod.rating || 4.5,
       category: prod.category || 'General',
       description: prod.description || '',
+      stock: available, // Stock disponible calculado
     };
   });
 
@@ -53,9 +59,24 @@ export default async function Home({ searchParams }: HomeProps) {
     const matchesSearch = !search || 
       prod.title.toLowerCase().includes(search.toLowerCase());
     
-    // Si hay categoría, comparamos exacto
-    const matchesCategory = !category || 
-      prod.category === category;
+    // Si hay categoría, comparamos de forma flexible (ignorando mayúsculas y espacios)
+    let matchesCategory = true;
+    if (category) {
+      const normalizedCategory = category.toLowerCase().trim();
+      const normalizedProdCategory = prod.category.toLowerCase().trim();
+      
+      // Mapeo de categorías para flexibilidad
+      if (normalizedCategory === 'verano') {
+        matchesCategory = normalizedProdCategory === 'verano';
+      } else if (normalizedCategory === 'cigarros' || normalizedCategory === 'cigarro') {
+        // Buscar productos que tengan "cigarro" en el nombre o categoría
+        matchesCategory = 
+          normalizedProdCategory.includes('cigarro') || 
+          prod.title.toLowerCase().includes('cigarro');
+      } else {
+        matchesCategory = normalizedProdCategory === normalizedCategory;
+      }
+    }
     
     return matchesSearch && matchesCategory;
   });
@@ -138,6 +159,7 @@ export default async function Home({ searchParams }: HomeProps) {
                   originalPrice={prod.originalPrice}
                   image={prod.image}
                   rating={prod.rating}
+                  stock={prod.stock}
                 />
               ))}
             </div>

@@ -44,6 +44,9 @@ interface VentifyProduct {
   description?: string;
   rating?: number;
   originalPrice?: number;
+  stock?: number; // Stock físico total
+  reservedStock?: number; // Stock reservado
+  availableStock?: number; // Stock disponible calculado
 }
 
 interface VentifyProductsResponse {

@@ -1,10 +1,19 @@
 import Link from 'next/link';
 import Navbar from '../components/Navbar';
+import { Suspense } from 'react';
+
+function NavbarWrapper() {
+  return (
+    <Suspense fallback={<div className="h-16 bg-white shadow-sm"></div>}>
+      <Navbar />
+    </Suspense>
+  );
+}
 
 export default function Privacidad() {
   return (
     <>
-      <Navbar />
+      <NavbarWrapper />
       <div className="bg-gray-50 min-h-screen py-8 sm:py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link href="/" className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6 text-sm sm:text-base">

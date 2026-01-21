@@ -18,6 +18,7 @@ interface Product {
   image: string;
   description: string;
   category: string;
+  stock: number;
 }
 
 export default function ProductDetail() {
@@ -35,16 +36,23 @@ export default function ProductDetail() {
       const ventifyProducts = await getVentifyProducts();
       
       // Mapear productos
-      const products = ventifyProducts.map(prod => ({
-        id: prod.id,
-        title: prod.name,
-        price: prod.price,
-        originalPrice: prod.originalPrice || undefined,
-        image: prod.imageUrl || prod.image || '/placeholder-product.png',
-        rating: prod.rating || 4.5,
-        category: prod.category || 'General',
-        description: prod.description || 'Producto de calidad premium',
-      }));
+      const products = ventifyProducts.map(prod => {
+        const physicalStock = prod.stock || 0;
+        const reserved = prod.reservedStock || 0;
+        const available = Math.max(0, physicalStock - reserved);
+        
+        return {
+          id: prod.id,
+          title: prod.name,
+          price: prod.price,
+          originalPrice: prod.originalPrice || undefined,
+          image: prod.imageUrl || prod.image || '/placeholder-product.png',
+          rating: prod.rating || 4.5,
+          category: prod.category || 'General',
+          description: prod.description || 'Producto de calidad premium',
+          stock: available,
+        };
+      });
 
       // Buscar producto por nombre (URL friendly)
       const foundProduct = products.find(p => 
@@ -160,33 +168,56 @@ export default function ProductDetail() {
                 )}
               </div>
 
+              {/* Stock Indicator */}
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                {product.stock === 0 ? (
+                  <div className="flex items-center gap-2">
+                    <span className="text-red-600 font-bold text-lg">❌ Agotado</span>
+                  </div>
+                ) : product.stock <= 5 ? (
+                  <div className="flex items-center gap-2">
+                    <span className="text-orange-600 font-semibold">⚠️ Solo quedan {product.stock} unidades</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-600 font-semibold">✓ Stock disponible: {product.stock} unidades</span>
+                  </div>
+                )}
+              </div>
+
               {/* Quantity Selector */}
               <div className="flex items-center space-x-4">
                 <span className="font-semibold text-sm sm:text-base">Cantidad:</span>
                 <div className="flex items-center border-2 border-gray-300 rounded-lg">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="p-2 sm:p-3 hover:bg-gray-100 transition-colors"
+                    disabled={product.stock === 0}
+                    className="p-2 sm:p-3 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Minus className="h-4 w-4" />
                   </button>
                   <span className="px-4 sm:px-6 py-2 font-bold">{quantity}</span>
                   <button
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="p-2 sm:p-3 hover:bg-gray-100 transition-colors"
+                    onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                    disabled={product.stock === 0 || quantity >= product.stock}
+                    className="p-2 sm:p-3 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Plus className="h-4 w-4" />
                   </button>
                 </div>
+                {product.stock > 0 && quantity >= product.stock && (
+                  <span className="text-xs sm:text-sm text-orange-600 font-medium">Máximo disponible</span>
+                )}
               </div>
 
               {/* Add to Cart Button */}
               <button
                 onClick={handleAddToCart}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold text-base sm:text-lg flex items-center justify-center transition-colors shadow-lg"
+                disabled={product.stock === 0}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold text-base sm:text-lg flex items-center justify-center transition-colors shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
-                Añadir al Carrito
+                {product.stock === 0 ? 'Agotado' : 'Añadir al Carrito'}
               </button>
 
               {/* Description */}

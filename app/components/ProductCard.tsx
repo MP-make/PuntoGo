@@ -12,13 +12,19 @@ interface ProductCardProps {
   originalPrice: number | undefined;
   image: string;
   rating: number;
+  stock?: number;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ id, title, price, originalPrice, image, rating }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ id, title, price, originalPrice, image, rating, stock }) => {
   const { addToCart } = useCart();
 
   // Calcular porcentaje de descuento si hay originalPrice
   const discountPercentage = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
+  
+  // Calcular stock disponible (stock puede ser undefined si Ventify no lo proporciona)
+  const availableStock = stock !== undefined ? stock : 999; // Si no hay stock, asumimos disponibilidad
+  const isOutOfStock = availableStock === 0;
+  const isLowStock = availableStock > 0 && availableStock <= 5;
 
   return (
     <div className="bg-white rounded-lg sm:rounded-xl border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden group relative">
@@ -28,16 +34,22 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, title, price, originalPri
           <img
             src={image}
             alt={title}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+            className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 ${isOutOfStock ? 'opacity-50 grayscale' : ''}`}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.src = '/placeholder-product.png';
             }}
           />
           {/* Badge dinámico */}
-          {discountPercentage > 0 && (
+          {discountPercentage > 0 && !isOutOfStock && (
             <div className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-red-500 text-white text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded font-bold">
               -{discountPercentage}%
+            </div>
+          )}
+          {/* Badge de stock agotado */}
+          {isOutOfStock && (
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white px-3 py-2 rounded-lg font-bold text-sm sm:text-base">
+              AGOTADO
             </div>
           )}
         </div>
@@ -66,13 +78,33 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, title, price, originalPri
           {originalPrice && <span className="text-xs sm:text-sm text-gray-500 line-through ml-1 sm:ml-2">S/ {originalPrice}</span>}
         </div>
 
+        {/* Stock indicator */}
+        {!isOutOfStock && stock !== undefined && (
+          <div className="mb-2">
+            {isLowStock ? (
+              <p className="text-xs text-orange-600 font-semibold">
+                ⚠️ Solo quedan {availableStock} unidades
+              </p>
+            ) : (
+              <p className="text-xs text-green-600 font-medium">
+                ✓ {availableStock} disponibles
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Button */}
         <button
-          onClick={() => addToCart({ id, title, price, image, rating })}
-          className="w-full border-2 border-blue-500 text-blue-500 py-1.5 sm:py-2 px-2 sm:px-4 rounded-lg flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all duration-300 group-hover:translate-y-0 translate-y-2 opacity-80 group-hover:opacity-100 text-xs sm:text-sm lg:text-base"
+          onClick={() => !isOutOfStock && addToCart({ id, title, price, image, rating })}
+          disabled={isOutOfStock}
+          className={`w-full border-2 py-1.5 sm:py-2 px-2 sm:px-4 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:translate-y-0 translate-y-2 opacity-80 group-hover:opacity-100 text-xs sm:text-sm lg:text-base ${
+            isOutOfStock 
+              ? 'border-gray-300 text-gray-400 cursor-not-allowed' 
+              : 'border-blue-500 text-blue-500 hover:bg-blue-600 hover:text-white'
+          }`}
         >
           <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-          Agregar
+          {isOutOfStock ? 'Agotado' : 'Agregar'}
         </button>
       </div>
     </div>
