@@ -16,7 +16,7 @@ interface CategoryRailProps {
 const categories: Category[] = [
   { name: 'Cervezas', icon: Beer },
   { name: 'Vinos', icon: Wine },
-  { name: 'Calor', icon: Sun },
+  { name: 'verano', icon: Sun }, // Cambiar a "verano" para coincidir con Ventify
   { name: 'Licores', icon: Martini },
   { name: 'Snacks', icon: Package },
   { name: 'Cigarros', icon: Cigarette },

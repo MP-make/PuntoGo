@@ -3,10 +3,13 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../contexts/AuthContext';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Mail, Phone, MapPin, User, Package, Award, TrendingUp } from 'lucide-react';
+import Navbar from '../components/Navbar';
 
 export default function Profile() {
   const { user, updateUser } = useAuth();
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [telefono, setTelefono] = useState(user?.phone || '');
   const [direccion, setDireccion] = useState(user?.savedAddress || '');
@@ -14,118 +17,207 @@ export default function Profile() {
   const [phoneError, setPhoneError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (user) {
+    if (!user) {
+      router.push('/login');
+    } else {
       setTelefono(user.phone || '');
       setDireccion(user.savedAddress || '');
       setReferencia(user.reference || '');
     }
-  }, [user]);
+  }, [user, router]);
+
+  if (!user) return null;
 
   return (
-    <div className="max-w-6xl mx-auto py-10 px-4">
-      <div className="flex flex-col md:flex-row gap-8">
-        {/* Sidebar */}
-        <div className="md:w-1/4">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold mb-4">Mi Cuenta</h2>
-            <nav className="space-y-2">
-              <Link href="/profile" className="block px-4 py-2 bg-blue-100 text-blue-700 rounded">Mi Perfil</Link>
-              <Link href="/orders" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Mis Pedidos</Link>
-              <Link href="/" className="block px-4 py-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded">← Volver a la Tienda</Link>
-            </nav>
-          </div>
-        </div>
+    <>
+      <Navbar />
+      <div className="bg-gray-50 min-h-screen py-6 sm:py-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Breadcrumb */}
+          <Link href="/" className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 mb-4 sm:mb-6">
+            ← Volver a la Tienda
+          </Link>
 
-        {/* Main Content */}
-        <div className="md:w-3/4">
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div className="bg-white rounded-lg shadow-md p-6 text-center">
-              <h3 className="text-2xl font-bold text-green-600">S/ 1,250.00</h3>
-              <p className="text-gray-600">Total Gastado</p>
-            </div>
-            <div className="bg-white rounded-lg shadow-md p-6 text-center">
-              <h3 className="text-2xl font-bold text-blue-600">12</h3>
-              <p className="text-gray-600">Pedidos Realizados</p>
-            </div>
-            <div className="bg-white rounded-lg shadow-md p-6 text-center">
-              <h3 className="text-2xl font-bold text-purple-600">250</h3>
-              <p className="text-gray-600">Puntos Acumulados</p>
+          {/* Header con avatar */}
+          <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl shadow-xl p-6 sm:p-8 mb-6 sm:mb-8 text-white">
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center">
+                <User className="w-12 h-12 sm:w-16 sm:h-16 text-blue-600" />
+              </div>
+              <div className="text-center sm:text-left flex-1">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">¡Hola, {user.name}!</h1>
+                <p className="text-blue-100 text-sm sm:text-base">{user.email}</p>
+              </div>
             </div>
           </div>
 
-          <h1 className="text-4xl font-bold mb-8">Bienvenido, {user?.name}</h1>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+            {/* Sidebar */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 sticky top-4">
+                <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
+                  <User className="w-5 h-5 text-blue-600" />
+                  Mi Cuenta
+                </h2>
+                <nav className="space-y-2">
+                  <Link href="/profile" className="flex items-center gap-3 px-4 py-3 bg-blue-50 text-blue-700 rounded-lg font-medium transition-colors">
+                    <User className="w-5 h-5" />
+                    Mi Perfil
+                  </Link>
+                  <Link href="/orders" className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+                    <Package className="w-5 h-5" />
+                    Mis Pedidos
+                  </Link>
+                </nav>
+              </div>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow-lg p-6 text-center">
-              <Mail className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Email</h3>
-              <p className="text-gray-600">{user?.email}</p>
-            </div>
-            <div className="bg-white rounded-lg shadow-lg p-6 text-center">
-              <Phone className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Teléfono</h3>
-              <p className="text-gray-600">{user?.phone || 'No registrado'}</p>
-            </div>
-            <div className="bg-white rounded-lg shadow-lg p-6 text-center">
-              <MapPin className="h-12 w-12 text-red-600 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Dirección</h3>
-              <p className="text-gray-600">{user?.savedAddress}{user?.reference ? ` (${user?.reference})` : ''}</p>
-            </div>
-          </div>
+            {/* Main Content */}
+            <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+              {/* Stats Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl shadow-sm p-4 sm:p-6 border border-green-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <TrendingUp className="w-8 h-8 text-green-600" />
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-green-700 mb-1">S/ 1,250</h3>
+                  <p className="text-xs sm:text-sm text-green-600 font-medium">Total Gastado</p>
+                </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold mb-6">Editar Información</h2>
-            {!isEditing ? (
-              <button onClick={() => setIsEditing(true)} className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Editar Perfil</button>
-            ) : (
-              <>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
-                  <input
-                    type="tel"
-                    value={telefono}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, '');
-                      if (value.length > 9) return;
-                      setTelefono(value);
-                      if (value.length === 9 && !value.startsWith('9')) {
-                        setPhoneError('El número debe empezar con 9');
-                      } else if (value.length > 0 && value.length < 9) {
-                        setPhoneError('Debe tener exactamente 9 dígitos');
-                      } else {
-                        setPhoneError(null);
-                      }
-                    }}
-                    maxLength={9}
-                    className="w-full p-2 border border-gray-300 rounded"
-                  />
-                  {phoneError && <p className="text-red-500 text-sm">{phoneError}</p>}
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-sm p-4 sm:p-6 border border-blue-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <Package className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-blue-700 mb-1">12</h3>
+                  <p className="text-xs sm:text-sm text-blue-600 font-medium">Pedidos Realizados</p>
                 </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Dirección Exacta</label>
-                  <textarea
-                    value={direccion}
-                    onChange={(e) => setDireccion(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded"
-                    rows={3}
-                  />
+
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow-sm p-4 sm:p-6 border border-purple-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <Award className="w-8 h-8 text-purple-600" />
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-purple-700 mb-1">250</h3>
+                  <p className="text-xs sm:text-sm text-purple-600 font-medium">Puntos</p>
                 </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Referencia (Opcional)</label>
-                  <input
-                    type="text"
-                    value={referencia}
-                    onChange={(e) => setReferencia(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded"
-                  />
+              </div>
+
+              {/* Información Personal */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Información Personal</h2>
+                  {!isEditing && (
+                    <button 
+                      onClick={() => setIsEditing(true)} 
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base font-medium"
+                    >
+                      Editar
+                    </button>
+                  )}
                 </div>
-                <button onClick={() => { if (phoneError) return; updateUser({ phone: telefono, savedAddress: direccion, reference: referencia }); setIsEditing(false); }} className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700">Guardar Cambios</button>
-              </>
-            )}
+
+                {!isEditing ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
+                      <Mail className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-medium text-gray-500 mb-1">Email</h3>
+                        <p className="text-sm sm:text-base text-gray-900 break-all">{user.email}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
+                      <Phone className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                      <div className="flex-1">
+                        <h3 className="text-sm font-medium text-gray-500 mb-1">Teléfono</h3>
+                        <p className="text-sm sm:text-base text-gray-900">{user.phone || 'No registrado'}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg sm:col-span-2">
+                      <MapPin className="w-6 h-6 text-red-600 flex-shrink-0 mt-1" />
+                      <div className="flex-1">
+                        <h3 className="text-sm font-medium text-gray-500 mb-1">Dirección de Entrega</h3>
+                        <p className="text-sm sm:text-base text-gray-900">
+                          {user.savedAddress || 'No registrada'}
+                          {user.reference && <span className="block text-gray-600 text-sm mt-1">Ref: {user.reference}</span>}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4 sm:space-y-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Teléfono / Celular *</label>
+                      <input
+                        type="tel"
+                        value={telefono}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, '');
+                          if (value.length > 9) return;
+                          setTelefono(value);
+                          if (value.length === 9 && !value.startsWith('9')) {
+                            setPhoneError('El número debe empezar con 9');
+                          } else if (value.length > 0 && value.length < 9) {
+                            setPhoneError('Debe tener exactamente 9 dígitos');
+                          } else {
+                            setPhoneError(null);
+                          }
+                        }}
+                        maxLength={9}
+                        placeholder="9XXXXXXXX"
+                        className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base ${phoneError ? 'border-red-500' : 'border-gray-300'}`}
+                      />
+                      {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Dirección Exacta</label>
+                      <textarea
+                        value={direccion}
+                        onChange={(e) => setDireccion(e.target.value)}
+                        placeholder="Ej: Av. Principal 123, San Isidro"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                        rows={3}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Referencia (Opcional)</label>
+                      <input
+                        type="text"
+                        value={referencia}
+                        onChange={(e) => setReferencia(e.target.value)}
+                        placeholder="Ej: Casa de dos pisos, portón negro"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                      />
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                      <button 
+                        onClick={() => { 
+                          if (phoneError) return; 
+                          updateUser({ phone: telefono, savedAddress: direccion, reference: referencia }); 
+                          setIsEditing(false); 
+                        }} 
+                        disabled={!!phoneError}
+                        className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                      >
+                        Guardar Cambios
+                      </button>
+                      <button 
+                        onClick={() => setIsEditing(false)} 
+                        className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-bold hover:bg-gray-300 transition-colors text-sm sm:text-base"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -23,7 +23,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, title, price, originalPri
   return (
     <div className="bg-white rounded-lg sm:rounded-xl border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden group relative">
       {/* Image */}
-      <Link href={`/product/${id}`}>
+      <Link href={`/product/${encodeURIComponent(title.replace(/\s+/g, '-'))}`}>
         <div className="aspect-square bg-gray-200 relative overflow-hidden cursor-pointer">
           <img
             src={image}
@@ -46,7 +46,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, title, price, originalPri
       {/* Content */}
       <div className="p-2.5 sm:p-4 relative">
         {/* Title */}
-        <Link href={`/product/${id}`}>
+        <Link href={`/product/${encodeURIComponent(title.replace(/\s+/g, '-'))}`}>
           <h3 className="font-semibold text-gray-800 line-clamp-2 mb-1 sm:mb-2 cursor-pointer hover:text-blue-600 transition-colors text-xs sm:text-sm lg:text-base">{title}</h3>
         </Link>
 

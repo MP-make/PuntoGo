@@ -4,10 +4,12 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect, useState, Suspense } from 'react';
 import confetti from 'canvas-confetti';
+import { useAuth } from '../contexts/AuthContext';
 
 function SuccessContent() {
   const searchParams = useSearchParams();
   const nameParams = searchParams.get('name') || 'Cliente';
+  const { user } = useAuth();
   
   const [order, setOrder] = useState<any>(null);
   const [mounted, setMounted] = useState(false);
@@ -93,12 +95,14 @@ function SuccessContent() {
             >
               Volver a la Tienda
             </Link>
-            <Link 
-              href="/orders" 
-              className="block w-full py-3 sm:py-4 bg-white text-gray-700 border-2 border-gray-300 rounded-xl font-bold text-sm sm:text-base hover:bg-gray-50 transition-colors"
-            >
-              Ver mis Pedidos
-            </Link>
+            {user && (
+              <Link 
+                href="/orders" 
+                className="block w-full py-3 sm:py-4 bg-white text-gray-700 border-2 border-gray-300 rounded-xl font-bold text-sm sm:text-base hover:bg-gray-50 transition-colors"
+              >
+                Ver mis Pedidos
+              </Link>
+            )}
           </div>
         </div>
 

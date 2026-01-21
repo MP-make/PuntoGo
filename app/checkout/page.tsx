@@ -65,6 +65,14 @@ const CheckoutPage: React.FC = () => {
       return;
     }
 
+    // VALIDAR PAGO DIGITAL: Debe tener número de operación O comprobante
+    if (metodoPago === 'DIGITAL') {
+      if (!nroOperacion.trim() && !comprobanteFile) {
+        setError('Para pago digital debes ingresar el número de operación o adjuntar una captura.');
+        return;
+      }
+    }
+
     const finalDireccion = user && selectedAddress === 'saved' ? `${user.savedAddress}${user.reference ? ` (${user.reference})` : ''}` : direccion;
 
     // Generar ID único para la orden
@@ -140,6 +148,11 @@ const CheckoutPage: React.FC = () => {
     <>
       <div className="bg-gray-50 min-h-screen pb-16 sm:pb-0">
         <div className="max-w-6xl mx-auto py-6 sm:py-10 px-3 sm:px-4 lg:px-6">
+          {/* Botón Volver al Inicio */}
+          <Link href="/" className="inline-flex items-center text-sm sm:text-base text-blue-600 hover:text-blue-800 mb-4 sm:mb-6 font-medium transition-colors">
+            ← Volver a la Tienda
+          </Link>
+          
           <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">Checkout</h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
