@@ -1,26 +1,25 @@
 // Servicio para integración con la API de Ventify
 
 interface VentifyCustomer {
-  name: string;
-  phone: string;
-  email?: string;
-  address?: string;
-  reference?: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
 }
 
 interface VentifyItem {
-  product_id: string;
-  name: string;
-  price: number;
+  productId: string;
+  productName: string;
   quantity: number;
+  price: number;
 }
 
 interface VentifyOrderPayload {
-  external_id: string;
-  customer: VentifyCustomer;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
   items: VentifyItem[];
   total: number;
-  payment_method: string;
+  preferredPaymentMethod: string;
   notes?: string;
 }
 
@@ -32,8 +31,26 @@ interface VentifyOrderResponse {
   error?: string;
 }
 
+interface VentifyProduct {
+  id: string;
+  name: string;
+  price: number;
+  image?: string;
+  category?: string;
+  description?: string;
+  rating?: number;
+  originalPrice?: number;
+}
+
+interface VentifyProductsResponse {
+  success: boolean;
+  products?: VentifyProduct[];
+  error?: string;
+}
+
 const API_URL = process.env.NEXT_PUBLIC_VENTIFY_API_URL || '';
 const API_KEY = process.env.NEXT_PUBLIC_VENTIFY_API_KEY || '';
+const ACCOUNT_ID = process.env.NEXT_PUBLIC_VENTIFY_ACCOUNT_ID || '';
 
 /**
  * Crea una orden en la API de Ventify
@@ -45,7 +62,7 @@ export async function createVentifyOrder(
 ): Promise<VentifyOrderResponse> {
   try {
     // Validar que existan las credenciales
-    if (!API_URL || !API_KEY) {
+    if (!API_URL || !API_KEY || !ACCOUNT_ID) {
       console.error('❌ Faltan credenciales de Ventify en variables de entorno');
       return {
         success: false,
@@ -54,21 +71,23 @@ export async function createVentifyOrder(
     }
 
     console.log('📤 Enviando orden a Ventify:', {
-      external_id: orderData.external_id,
-      customer: orderData.customer.name,
-      total: orderData.total
+      customerName: orderData.customerName,
+      total: orderData.total,
+      itemsCount: orderData.items.length
     });
 
-    const response = await fetch(`${API_URL}/orders`, {
+    const response = await fetch(`${API_URL}/api/public/stores/${ACCOUNT_ID}/sale-requests`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_KEY}`,
+        'X-API-Key': API_KEY,
       },
       body: JSON.stringify(orderData),
     });
 
     const data = await response.json();
+
+    console.log('📥 Respuesta del servidor Ventify:', data);
 
     if (!response.ok) {
       console.error('❌ Error de Ventify API:', data);
@@ -91,6 +110,45 @@ export async function createVentifyOrder(
       success: false,
       error: error instanceof Error ? error.message : 'Error desconocido'
     };
+  }
+}
+
+/**
+ * Obtiene la lista de productos de Ventify
+ * @returns Lista de productos
+ */
+export async function getVentifyProducts(): Promise<VentifyProduct[]> {
+  try {
+    // Validar que existan las credenciales
+    if (!API_URL || !API_KEY || !ACCOUNT_ID) {
+      console.error('❌ Faltan credenciales de Ventify en variables de entorno');
+      return [];
+    }
+
+    console.log('📤 Obteniendo productos de Ventify...');
+
+    const response = await fetch(`${API_URL}/api/public/stores/${ACCOUNT_ID}/products?active=true`, {
+      method: 'GET',
+      headers: {
+        'X-API-Key': API_KEY,
+      },
+    });
+
+    const data = await response.json();
+
+    console.log('📥 Respuesta de productos Ventify:', data);
+
+    if (!response.ok) {
+      console.error('❌ Error al obtener productos de Ventify:', data);
+      return [];
+    }
+
+    console.log('✅ Productos obtenidos exitosamente de Ventify:', data.data?.length || 0, 'productos');
+    return data.data || []; // Retornar response.data donde viene el array
+
+  } catch (error) {
+    console.error('❌ Error al conectar con Ventify:', error);
+    return [];
   }
 }
 

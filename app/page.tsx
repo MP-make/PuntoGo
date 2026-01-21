@@ -3,7 +3,7 @@ import HeroCarousel from './components/HeroCarousel';
 import CategoryRail from './components/CategoryRail';
 import ProductCard from './components/ProductCard';
 import CartDrawer from './components/CartDrawer';
-import { products } from '@/app/data/products';
+import { getVentifyProducts } from './services/ventifyService';
 
 // 1. Forzamos renderizado dinámico para que no se quede pegado en caché
 export const dynamic = "force-dynamic";
@@ -27,7 +27,27 @@ export default async function Home({ searchParams }: HomeProps) {
   console.log("Búsqueda:", search);
   console.log("Categoría:", category);
 
-  // 5. Lógica de Filtrado
+  // 5. Obtener productos reales de Ventify
+  console.log("📡 Obteniendo productos reales de Ventify...");
+  const ventifyProducts = await getVentifyProducts();
+
+  // 6. Mapear productos de Ventify al formato esperado por ProductCard
+  const products = ventifyProducts.map(prod => {
+    return {
+      id: prod.id,
+      title: prod.name,
+      price: prod.price,
+      originalPrice: prod.originalPrice || undefined, // Mostrar originalPrice si existe, aunque sea igual
+      image: prod.imageUrl || '/placeholder-product.png',
+      rating: prod.rating || 4.5,
+      category: prod.category || 'General',
+      description: prod.description || '',
+    };
+  });
+
+  console.log(`✅ Mapeados ${products.length} productos para mostrar`);
+
+  // 7. Lógica de Filtrado
   const filteredProducts = products.filter(prod => {
     // Si hay búsqueda, comparamos ignorando mayúsculas/minúsculas
     const matchesSearch = !search || 
@@ -40,7 +60,7 @@ export default async function Home({ searchParams }: HomeProps) {
     return matchesSearch && matchesCategory;
   });
 
-  // 6. Configuración de Títulos Dinámicos
+  // 8. Configuración de Títulos Dinámicos
   let title = "Ofertas de la Semana";
   let subtitle = "Precios bajos por tiempo limitado";
   const isFiltering = !!search || !!category;
@@ -79,12 +99,20 @@ export default async function Home({ searchParams }: HomeProps) {
       )}
 
       <main id="catalogo" className="max-w-7xl mx-auto p-4 mt-4">
-        {filteredProducts.length === 0 ? (
+        {products.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-24 bg-white rounded-2xl shadow-sm border border-gray-100 text-center">
+            <div className="text-6xl mb-4">📦</div>
+            <h3 className="text-2xl font-bold text-slate-800 mb-2">Cargando productos...</h3>
+            <p className="text-gray-500 max-w-md mx-auto">
+              Estamos obteniendo los productos más frescos de nuestro catálogo.
+            </p>
+          </div>
+        ) : filteredProducts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 bg-white rounded-2xl shadow-sm border border-gray-100 text-center">
             <div className="text-6xl mb-4">🔍</div>
             <h3 className="text-2xl font-bold text-slate-800 mb-2">No encontramos ese producto</h3>
             <p className="text-gray-500 max-w-md mx-auto mb-8">
-              No hay coincidencias para "{search || category}". Intenta buscar "Cerveza", "Vino" o "Whisky".
+              No hay coincidencias para "{search || category}". Intenta buscar otros términos.
             </p>
             <a 
               href="/" 

@@ -17,6 +17,9 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ id, title, price, originalPrice, image, rating }) => {
   const { addToCart } = useCart();
 
+  // Calcular porcentaje de descuento si hay originalPrice
+  const discountPercentage = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
+
   return (
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden group relative">
       {/* Image */}
@@ -27,10 +30,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, title, price, originalPri
             alt={title}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
           />
-          {/* Badge */}
-          <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
-            -20%
-          </div>
+          {/* Badge dinámico */}
+          {discountPercentage > 0 && (
+            <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+              -{discountPercentage}%
+            </div>
+          )}
         </div>
       </Link>
 

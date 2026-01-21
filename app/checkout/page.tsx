@@ -89,24 +89,18 @@ const CheckoutPage: React.FC = () => {
 
     // Preparar payload para la API de Ventify
     const ventifyPayload = {
-      external_id: orderId,
-      customer: {
-        name: nombre,
-        phone: finalTelefono,
-        email: user?.email,
-        address: finalDireccion,
-      },
+      customerName: nombre,
+      customerEmail: user?.email || 'cliente@puntogo.com', // Email por defecto si no existe
+      customerPhone: finalTelefono,
       items: cart.map(item => ({
-        product_id: item.product.id,
-        name: item.product.title,
-        price: item.product.price,
+        productId: item.product.id,
+        productName: item.product.title,
         quantity: item.quantity,
+        price: item.product.price,
       })),
       total: parseFloat(totalAmount.toFixed(2)),
-      payment_method: metodoPago === 'DIGITAL' ? 'YAPE_PLIN' : 'CASH',
-      notes: metodoPago === 'DIGITAL' && nroOperacion 
-        ? `Operación: ${nroOperacion}` 
-        : undefined,
+      preferredPaymentMethod: metodoPago,
+      notes: `Dirección: ${finalDireccion}\n${metodoPago === 'DIGITAL' && nroOperacion ? `Operación: ${nroOperacion}` : 'Pago contra entrega'}`,
     };
 
     // Intentar enviar a la API de Ventify
