@@ -35,9 +35,27 @@ const CheckoutPage: React.FC = () => {
   const FREE_SHIPPING_THRESHOLD = 50;
 
   const subtotal = totalAmount;
-  const shippingCost = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : (subtotal >= MINIMUM_ORDER ? SHIPPING_COST : 0);
-  const total = subtotal + shippingCost;
   const isMinimumMet = subtotal >= MINIMUM_ORDER;
+  
+  // CORRECCIÓN DEFINITIVA: Si NO cumple el mínimo, NO mostrar envío como "gratis"
+  let shippingCost = 0;
+  let shippingLabel = '';
+  
+  if (!isMinimumMet) {
+    // No cumple mínimo: No puede comprar, no calcular envío
+    shippingCost = 0;
+    shippingLabel = '-';
+  } else if (subtotal >= FREE_SHIPPING_THRESHOLD) {
+    // Cumple para envío gratis
+    shippingCost = 0;
+    shippingLabel = '¡GRATIS!';
+  } else {
+    // Cumple mínimo pero paga envío
+    shippingCost = SHIPPING_COST;
+    shippingLabel = `S/ ${SHIPPING_COST.toFixed(2)}`;
+  }
+  
+  const total = subtotal + shippingCost;
 
   useEffect(() => {
     if (user) {
@@ -330,7 +348,7 @@ const CheckoutPage: React.FC = () => {
                   </div>
                 </form>
 
-                {/* Método de Pago - Sin cambios */}
+                {/* Método de Pago - Con rediseño */}
                 <div className="mt-6 sm:mt-8">
                   <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Método de Pago</h3>
                   <div className="space-y-3">
@@ -345,45 +363,144 @@ const CheckoutPage: React.FC = () => {
                   </div>
 
                   {metodoPago === 'DIGITAL' && (
-                    <div className="mt-4 p-3 sm:p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                      <h4 className="font-semibold mb-2 text-sm sm:text-base flex items-center gap-2">
-                        <span>⚠️</span>
-                        Escanea el QR con Yape o Plin
-                      </h4>
-                      <div className="bg-white p-3 sm:p-4 rounded mb-3 sm:mb-4 text-center">
-                        <img src="/Yape-MarlonPecho.png" alt="QR Yape" className="mx-auto w-40 h-40 sm:w-48 sm:h-48 object-contain" />
+                    <div className="mt-4 p-4 sm:p-6 bg-gradient-to-br from-purple-50 via-white to-blue-50 rounded-xl border border-purple-200 shadow-sm">
+                      {/* Header */}
+                      <div className="flex items-center gap-3 mb-4 pb-4 border-b-2 border-purple-100">
+                        <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                          <span className="text-white text-2xl">💳</span>
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-lg text-gray-900">Pago con Yape o Plin</h4>
+                          <p className="text-xs text-gray-600">Escanea y paga al instante</p>
+                        </div>
+                      </div>
+
+                      {/* QR Container ARREGLADO - Sin recortes */}
+                      <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 mb-4 border-2 border-purple-200">
+                        <div className="flex flex-col items-center space-y-4">
+                          {/* QR con espacio suficiente */}
+                          <div className="bg-gradient-to-br from-purple-100 via-purple-50 to-blue-100 rounded-2xl p-6 w-full max-w-xs mx-auto">
+                            <img
+                              src="/Yape-MarlonPecho.png"
+                              alt="QR Yape - Marlon Pecho"
+                              className="w-full h-auto object-contain"
+                              style={{ minHeight: '200px', maxHeight: '300px' }}
+                            />
+                          </div>
+                          
+                          {/* Info del destinatario */}
+                          <div className="text-center bg-purple-50 px-6 py-3 rounded-xl border border-purple-200 w-full">
+                            <p className="text-sm font-bold text-purple-900">Marlon Yohel Pecho Pecho</p>
+                            <p className="text-xs text-gray-600 mt-0.5">Escanea con Yape o Plin</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Instrucciones */}
+                      <div className="bg-white rounded-xl p-4 mb-4 border-2 border-purple-100 shadow-sm">
+                        <p className="text-sm font-bold text-purple-900 mb-3 flex items-center gap-2">
+                          <span className="text-lg">📱</span> 
+                          Pasos para pagar:
+                        </p>
+                        <ol className="space-y-2 text-sm text-gray-700">
+                          <li className="flex gap-3">
+                            <span className="font-bold text-purple-600 flex-shrink-0 w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center text-xs">1</span>
+                            <span>Abre <strong>Yape</strong> o <strong>Plin</strong> en tu celular</span>
+                          </li>
+                          <li className="flex gap-3">
+                            <span className="font-bold text-purple-600 flex-shrink-0 w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center text-xs">2</span>
+                            <span>Escanea el código QR de arriba</span>
+                          </li>
+                          <li className="flex gap-3">
+                            <span className="font-bold text-purple-600 flex-shrink-0 w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center text-xs">3</span>
+                            <span>Confirma el pago de <strong className="text-purple-700">S/ {total.toFixed(2)}</strong></span>
+                          </li>
+                          <li className="flex gap-3">
+                            <span className="font-bold text-purple-600 flex-shrink-0 w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center text-xs">4</span>
+                            <span>Ingresa el número de operación abajo 👇</span>
+                          </li>
+                        </ol>
                       </div>
                       
-                      <div className="bg-orange-50 border-l-4 border-orange-500 p-3 mb-3 rounded">
-                        <p className="text-xs sm:text-sm text-orange-800 font-semibold flex items-start gap-2">
-                          <span className="text-base sm:text-lg">⚠️</span>
-                          <span><strong>Obligatorio:</strong> Debes ingresar el número de operación o adjuntar una captura del comprobante de pago para procesar tu pedido.</span>
+                      {/* Alerta */}
+                      <div className="bg-gradient-to-r from-orange-50 to-red-50 border-l-4 border-orange-500 p-4 mb-4 rounded-lg shadow-sm">
+                        <p className="text-sm text-orange-900 font-bold flex items-start gap-2">
+                          <span className="text-xl flex-shrink-0">⚠️</span>
+                          <span>
+                            <strong>Importante:</strong> Debes ingresar el número de operación o subir la captura para confirmar tu pedido.
+                          </span>
                         </p>
                       </div>
                       
-                      <div className="space-y-2">
-                        <input
-                          type="text"
-                          value={nroOperacion}
-                          onChange={(e) => setNroOperacion(e.target.value)}
-                          placeholder="Nro de Operación / Captura *"
-                          className={`w-full p-2 sm:p-3 border rounded text-sm sm:text-base ${metodoPago === 'DIGITAL' && !nroOperacion && !comprobanteFile ? 'border-orange-500 bg-orange-50' : 'border-gray-300'}`}
-                        />
-                        <div className="flex items-center gap-2">
-                          <label htmlFor="comprobante" className="inline-block px-3 sm:px-4 py-2 bg-gray-200 text-gray-700 rounded cursor-pointer hover:bg-gray-300 transition-colors text-sm sm:text-base flex-shrink-0">
-                            📷 Adjuntar Comprobante
+                      {/* Campos */}
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-800 mb-2">
+                            Número de Operación <span className="text-red-500">*</span>
                           </label>
-                          <span className="text-xs text-gray-500 italic">o ingresa el número arriba</span>
+                          <input
+                            type="text"
+                            value={nroOperacion}
+                            onChange={(e) => setNroOperacion(e.target.value)}
+                            placeholder="Ejemplo: 000123456789"
+                            className={`w-full p-3 border-2 rounded-xl text-sm font-medium transition-all ${
+                              metodoPago === 'DIGITAL' && !nroOperacion && !comprobanteFile 
+                                ? 'border-orange-400 bg-orange-50 focus:border-orange-600' 
+                                : 'border-gray-300 focus:border-purple-500 bg-white'
+                            } focus:outline-none focus:ring-2 focus:ring-purple-200`}
+                          />
                         </div>
-                        <input id="comprobante" type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-                        {previewUrl && (
-                          <div className="bg-green-50 p-3 sm:p-4 rounded-lg flex items-center space-x-3 sm:space-x-4 border border-green-300">
-                            <img src={previewUrl} alt="Comprobante" className="max-h-24 sm:max-h-36 rounded" />
-                            <div className="flex-1">
-                              <p className="text-xs sm:text-sm text-gray-700 break-all font-medium">✅ {comprobanteFile?.name}</p>
-                              <p className="text-xs text-green-600 mt-1">Comprobante cargado correctamente</p>
+
+                        <div className="flex items-center gap-3 text-sm text-gray-500">
+                          <div className="flex-1 h-px bg-gray-300"></div>
+                          <span className="font-bold bg-gray-100 px-3 py-1 rounded-full">o</span>
+                          <div className="flex-1 h-px bg-gray-300"></div>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-800 mb-2">
+                            Captura del Comprobante
+                          </label>
+                          <label 
+                            htmlFor="comprobante" 
+                            className="flex items-center justify-center gap-3 w-full p-4 bg-white border-3 border-dashed border-purple-300 rounded-xl cursor-pointer hover:border-purple-500 hover:bg-purple-50 transition-all group"
+                          >
+                            <span className="text-3xl group-hover:scale-110 transition-transform">📸</span>
+                            <div className="text-left">
+                              <p className="font-bold text-gray-800 group-hover:text-purple-700">Subir Captura</p>
+                              <p className="text-xs text-gray-500">PNG, JPG hasta 5MB</p>
                             </div>
-                            <button onClick={handleRemoveFile} className="text-red-500 hover:text-red-700 flex-shrink-0 text-lg sm:text-xl font-bold">×</button>
+                          </label>
+                          <input
+                            id="comprobante"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </div>
+
+                        {/* Preview */}
+                        {previewUrl && (
+                          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400 p-4 rounded-xl flex items-center gap-4 shadow-md animate-in fade-in slide-in-from-bottom-4 duration-300">
+                            <img 
+                              src={previewUrl} 
+                              alt="Comprobante" 
+                              className="w-24 h-24 rounded-xl object-cover shadow-lg border-2 border-white" 
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-bold text-gray-900 mb-1 truncate">
+                                ✅ {comprobanteFile?.name}
+                              </p>
+                              <p className="text-xs text-green-700 font-semibold">Listo para enviar</p>
+                            </div>
+                            <button 
+                              onClick={handleRemoveFile} 
+                              className="w-10 h-10 flex-shrink-0 bg-red-500 hover:bg-red-600 text-white rounded-full font-bold text-xl transition-all hover:scale-110 flex items-center justify-center shadow-lg"
+                              aria-label="Eliminar"
+                            >
+                              ×
+                            </button>
                           </div>
                         )}
                       </div>
@@ -434,8 +551,8 @@ const CheckoutPage: React.FC = () => {
                       <Truck className="w-4 h-4 text-gray-500" />
                       <span className="text-gray-600">Envío</span>
                     </div>
-                    <span className={`font-medium ${shippingCost === 0 ? 'text-green-600' : ''}`}>
-                      {shippingCost === 0 ? '¡GRATIS!' : `S/ ${shippingCost.toFixed(2)}`}
+                    <span className={`font-medium ${shippingLabel === '¡GRATIS!' ? 'text-green-600' : 'text-gray-900'}`}>
+                      {shippingLabel}
                     </span>
                   </div>
                 </div>
@@ -471,7 +588,7 @@ const CheckoutPage: React.FC = () => {
                   </div>
                 )}
 
-                {subtotal >= FREE_SHIPPING_THRESHOLD && (
+                {isMinimumMet && subtotal >= FREE_SHIPPING_THRESHOLD && (
                   <div className="bg-green-50 border-l-4 border-green-500 p-3 rounded">
                     <p className="text-xs sm:text-sm text-green-800 font-semibold">
                       🎉 <strong>¡Envío GRATIS!</strong>

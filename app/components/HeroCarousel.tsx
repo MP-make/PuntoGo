@@ -22,13 +22,13 @@ const slides: Slide[] = [
     image: '/Carrusel/Carrusel-cocteles.png'
   },
   {
-    title: 'Nuevos Vinos Importantes',
+    title: 'Nuevos Vinos Disponibles',
     subtitle: 'Descubre sabores únicos',
     buttonText: 'Explorar',
     image: '/Carrusel/Carrusel-vino.png'
   },
   {
-    title: 'Cervezas Artesanales',
+    title: 'Tus Cervezas Favoritas',
     subtitle: 'Frescas y de calidad',
     buttonText: 'Comprar Ahora',
     image: '/Carrusel/Carrusel-cervezaartesanal.png'
@@ -81,7 +81,13 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ className }) => {
               </p>
               <div className="pt-4">
                 <Link
-                  href="#catalogo"
+                  href={
+                    slide.title === 'Oferta Fin de Semana' 
+                      ? '/proximamente' 
+                      : slide.title === 'Nuevos Vinos Disponibles'
+                      ? '/?category=Vinos'
+                      : '/?category=Cervezas'
+                  }
                   className="inline-block bg-white text-slate-900 px-8 py-3 rounded-full font-bold text-base md:text-lg hover:bg-blue-50 hover:scale-105 transition-all shadow-xl pointer-events-auto"
                 >
                   {slide.buttonText}
