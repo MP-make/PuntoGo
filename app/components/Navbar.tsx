@@ -35,7 +35,7 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className="sticky top-0 bg-white shadow-sm z-50">
+      <nav className="sticky top-0 bg-white/70 backdrop-blur-lg border-b border-white/40 shadow-sm z-50 supports-[backdrop-filter]:bg-white/60">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16">
             {/* Logo */}

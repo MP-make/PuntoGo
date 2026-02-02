@@ -101,7 +101,7 @@ export default async function Home({ searchParams }: HomeProps) {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen pb-20">
+    <div className="bg-gray-50 min-h-screen pb-20 selection:bg-blue-600 selection:text-white">
       <Navbar />
       
       {/* Ocultamos Carrusel y Categorías grandes si estamos filtrando */}
@@ -125,18 +125,18 @@ export default async function Home({ searchParams }: HomeProps) {
         </div>
       )}
 
-      <main id="catalogo" className="max-w-7xl mx-auto p-3 sm:p-4 mt-3 sm:mt-4">
+      <main id="catalogo" className="relative max-w-7xl mx-auto p-3 sm:p-4 mt-3 sm:mt-4 z-10">
         {products.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 sm:py-24 bg-white rounded-2xl shadow-sm border border-gray-100 text-center">
-            <div className="text-5xl sm:text-6xl mb-4">📦</div>
+          <div className="flex flex-col items-center justify-center py-16 sm:py-24 bg-white/60 backdrop-blur-sm rounded-3xl shadow-glass border border-white/50 text-center">
+            <div className="text-5xl sm:text-6xl mb-4 animate-bounce">📦</div>
             <h3 className="text-xl sm:text-2xl font-bold text-slate-800 mb-2">Cargando productos...</h3>
             <p className="text-sm sm:text-base text-gray-500 max-w-md mx-auto px-4">
               Estamos obteniendo los productos más frescos de nuestro catálogo.
             </p>
           </div>
         ) : filteredProducts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 sm:py-24 bg-white rounded-2xl shadow-sm border border-gray-100 text-center">
-            <div className="text-5xl sm:text-6xl mb-4">🔍</div>
+          <div className="flex flex-col items-center justify-center py-16 sm:py-24 bg-white/60 backdrop-blur-sm rounded-3xl shadow-glass border border-white/50 text-center">
+            <div className="text-5xl sm:text-6xl mb-4 grayscale opacity-50">🔍</div>
             <h3 className="text-xl sm:text-2xl font-bold text-slate-800 mb-2">No encontramos ese producto</h3>
             <p className="text-sm sm:text-base text-gray-500 max-w-md mx-auto mb-6 sm:mb-8 px-4">
               No hay coincidencias para "{search || category}". Intenta buscar otros términos.
@@ -155,7 +155,7 @@ export default async function Home({ searchParams }: HomeProps) {
               <span className="text-gray-500 font-medium text-base sm:text-lg">• {filteredProducts.length} productos</span>
             </div>
             
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
               {filteredProducts.map((prod) => (
                 <ProductCard
                   key={prod.id}

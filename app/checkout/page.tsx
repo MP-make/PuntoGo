@@ -25,6 +25,7 @@ const CheckoutPage: React.FC = () => {
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -51,6 +52,56 @@ const CheckoutPage: React.FC = () => {
     if (input) input.value = '';
   };
 
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Tu navegador no soporta geolocalización");
+      return;
+    }
+
+    setIsLoadingLocation(true);
+    
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
+    };
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        const mapsLink = `https://maps.google.com/?q=${latitude},${longitude}`;
+        
+        try {
+          const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`);
+          const data = await response.json();
+          
+          if (data && data.display_name) {
+            const direccionFormateada = `${data.display_name} \n(Coordenadas: ${latitude}, ${longitude})`;
+            setDireccion(direccionFormateada);
+          } else {
+            setDireccion(`Ubicación seleccionada: ${latitude}, ${longitude}\n${mapsLink}`);
+          }
+        } catch (error) {
+          console.error("Error obteniendo dirección:", error);
+          setDireccion(`Ubicación seleccionada: ${latitude}, ${longitude}\n${mapsLink}`);
+        } finally {
+          setIsLoadingLocation(false);
+          if (user) setSelectedAddress('other');
+        }
+      },
+      (error) => {
+        console.error("Error de geolocalización:", error);
+        setIsLoadingLocation(false);
+        let msg = "No se pudo obtener la ubicación.";
+        if (error.code === 1) msg = "Por favor, permite el acceso a tu ubicación.";
+        else if (error.code === 2) msg = "Ubicación no disponible.";
+        else if (error.code === 3) msg = "Se agotó el tiempo para obtener la ubicación.";
+        alert(msg);
+      },
+      options
+    );
+  };
+
   const handleGenerateRequest = async () => {
     setError(null);
     const finalTelefono = user && selectedPhone === 'saved' ? (user.phone || '') : telefono;
@@ -65,7 +116,6 @@ const CheckoutPage: React.FC = () => {
       return;
     }
 
-    // VALIDAR PAGO DIGITAL: Debe tener número de operación O comprobante
     if (metodoPago === 'DIGITAL') {
       if (!nroOperacion.trim() && !comprobanteFile) {
         setError('⚠️ Para pago digital debes ingresar el número de operación o adjuntar una captura.');
@@ -75,7 +125,6 @@ const CheckoutPage: React.FC = () => {
 
     const finalDireccion = user && selectedAddress === 'saved' ? `${user.savedAddress}${user.reference ? ` (${user.reference})` : ''}` : direccion;
 
-    // Generar ID único para la orden
     const orderId = generateOrderId();
 
     const solicitud = {
@@ -90,15 +139,13 @@ const CheckoutPage: React.FC = () => {
 
     console.log('📦 Solicitud generada:', solicitud);
 
-    // GUARDAR EN LOCALSTORAGE (respaldo para la página de éxito)
     localStorage.setItem('lastOrder', JSON.stringify(solicitud));
 
     setIsProcessing(true);
 
-    // Preparar payload para la API de Ventify
     const ventifyPayload = {
       customerName: nombre,
-      customerEmail: user?.email || 'cliente@puntogo.com', // Email por defecto si no existe
+      customerEmail: user?.email || 'cliente@puntogo.com',
       customerPhone: finalTelefono,
       items: cart.map(item => ({
         productId: item.product.id,
@@ -111,7 +158,6 @@ const CheckoutPage: React.FC = () => {
       notes: `Dirección: ${finalDireccion}\n${metodoPago === 'DIGITAL' && nroOperacion ? `Operación: ${nroOperacion}` : 'Pago contra entrega'}`,
     };
 
-    // Intentar enviar a la API de Ventify
     try {
       console.log('🚀 Enviando orden a Ventify...');
       const response = await createVentifyOrder(ventifyPayload);
@@ -119,8 +165,6 @@ const CheckoutPage: React.FC = () => {
       if (response.success) {
         console.log('✅ Orden enviada exitosamente a Ventify:', response);
         
-        // Actualizar el ID de la orden con el de Ventify
-        // La API puede devolver el ID en diferentes campos
         const ventifyId = response.id || response.saleRequestId || response.order_id || response.data?.id;
         
         if (ventifyId) {
@@ -130,14 +174,11 @@ const CheckoutPage: React.FC = () => {
         }
       } else {
         console.warn('⚠️ No se pudo enviar a Ventify, pero continuamos:', response.error);
-        // No mostramos error al usuario, la orden se procesa localmente como respaldo
       }
     } catch (error) {
       console.error('❌ Error al conectar con Ventify:', error);
-      // Continuamos sin mostrar error - el localStorage servirá como respaldo
     }
 
-    // Simular procesamiento y redirigir
     setTimeout(() => {
       clearCart();
       router.push(`/success?name=${encodeURIComponent(nombre)}`);
@@ -148,7 +189,6 @@ const CheckoutPage: React.FC = () => {
     <>
       <div className="bg-gray-50 min-h-screen pb-16 sm:pb-0">
         <div className="max-w-6xl mx-auto py-6 sm:py-10 px-3 sm:px-4 lg:px-6">
-          {/* Botón Volver al Inicio */}
           <Link href="/" className="inline-flex items-center text-sm sm:text-base text-blue-600 hover:text-blue-800 mb-4 sm:mb-6 font-medium transition-colors">
             ← Volver a la Tienda
           </Link>
@@ -156,7 +196,6 @@ const CheckoutPage: React.FC = () => {
           <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">Checkout</h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-            {/* Columna Izquierda: Formulario */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
                 <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">Datos para tu Solicitud</h2>
@@ -267,26 +306,56 @@ const CheckoutPage: React.FC = () => {
                             onChange={() => setSelectedAddress('other')}
                             className="mr-3"
                           />
-                          <span className="font-medium">Usar otra dirección</span>
+                          <span className="font-medium">Usar otra dirección o ubicación actual</span>
                         </label>
                         {selectedAddress === 'other' && (
-                          <textarea
-                            value={direccion}
-                            onChange={(e) => setDireccion(e.target.value)}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mt-4"
-                            placeholder="Dirección completa"
-                            rows={3}
-                          />
+                          <div className="mt-4 space-y-2">
+                             <button
+                                type="button" 
+                                onClick={handleGetLocation}
+                                disabled={isLoadingLocation}
+                                className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors font-medium text-sm border border-green-200"
+                              >
+                                {isLoadingLocation ? (
+                                  <span className="animate-spin">⏳</span>
+                                ) : (
+                                  <span>📍</span>
+                                )}
+                                {isLoadingLocation ? "Obteniendo ubicación..." : "Usar mi Ubicación Actual"}
+                              </button>
+                              <textarea
+                                value={direccion}
+                                onChange={(e) => setDireccion(e.target.value)}
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="Dirección completa o usa el botón de ubicación"
+                                rows={3}
+                              />
+                          </div>
                         )}
                       </div>
                     ) : (
-                      <textarea
-                        value={direccion}
-                        onChange={(e) => setDireccion(e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Dirección completa"
-                        rows={3}
-                      />
+                      <div className="space-y-2">
+                        <button
+                          type="button" 
+                          onClick={handleGetLocation}
+                          disabled={isLoadingLocation}
+                          className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors font-medium text-sm border border-green-200 mb-2"
+                        >
+                           {isLoadingLocation ? (
+                              <span className="animate-spin">⏳</span>
+                           ) : (
+                              <span>📍</span>
+                           )}
+                           {isLoadingLocation ? "Obteniendo ubicación..." : "Usar mi Ubicación Actual"}
+                        </button>
+                        <textarea
+                          value={direccion}
+                          onChange={(e) => setDireccion(e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="Ingresa tu dirección exacta y referencia"
+                          rows={3}
+                        />
+                      </div>
                     )}
                   </div>
                 </form>
@@ -332,7 +401,6 @@ const CheckoutPage: React.FC = () => {
                         />
                       </div>
                       
-                      {/* MENSAJE DE ADVERTENCIA OBLIGATORIO */}
                       <div className="bg-orange-50 border-l-4 border-orange-500 p-3 mb-3 rounded">
                         <p className="text-xs sm:text-sm text-orange-800 font-semibold flex items-start gap-2">
                           <span className="text-base sm:text-lg">⚠️</span>
@@ -390,7 +458,6 @@ const CheckoutPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Columna Derecha: Resumen - Sticky solo en desktop */}
             <div className="lg:col-span-1">
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:sticky lg:top-4">
                 <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Resumen del Pedido</h3>
@@ -426,7 +493,6 @@ const CheckoutPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Modal de autenticación - Mobile optimized */}
       {showAuthModal && (
         <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 max-w-md w-full z-50 animate-in fade-in zoom-in duration-300">
@@ -446,7 +512,6 @@ const CheckoutPage: React.FC = () => {
         </div>
       )}
 
-      {/* Loading overlay */}
       {isProcessing && (
         <div className="fixed inset-0 z-[9999] bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-4">
           <div className="animate-spin rounded-full h-32 w-32 sm:h-40 sm:w-40 border-b-4 border-blue-600 mb-4 sm:mb-6"></div>

@@ -50,45 +50,58 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ className }) => {
   };
 
   return (
-    <div className={`relative overflow-hidden h-[200px] md:h-[400px] ${className}`}>
+    <div className={`relative overflow-hidden h-[300px] md:h-[500px] ${className}`}>
       {/* Slides */}
       {slides.map((slide, index) => (
         <div
           key={index}
-          className={`absolute inset-0 transition-opacity duration-1000 ${
-            index === currentSlide ? 'opacity-100' : 'opacity-0'
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+            index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
           }`}
-          style={{
-            backgroundImage: `url(${slide.image})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
         >
-          <div className="absolute inset-0 bg-black/50"></div>
-          <div className="relative flex items-center justify-center h-full px-4 z-10 pointer-events-none">
-            <div className="text-center text-white animate-in fade-in slide-in-from-bottom-4 duration-1000">
-              <h2 className="text-4xl md:text-7xl font-black tracking-tight mb-4">{slide.title}</h2>
-              <p className="text-lg md:text-xl mb-6 text-gray-200">{slide.subtitle}</p>
-              <Link
-                href="#catalogo"
-                className="inline-block bg-white/20 backdrop-blur-md border border-white/30 text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-black transition-all pointer-events-auto"
-              >
-                {slide.buttonText}
-              </Link>
+          {/* Background Image with Ken Burns Effect */}
+          <div 
+            className={`absolute inset-0 bg-cover bg-center transition-transform duration-[8000ms] ease-out ${
+               index === currentSlide ? 'scale-110' : 'scale-100'
+            }`}
+            style={{ backgroundImage: `url(${slide.image})` }}
+          />
+          
+          {/* Overlay oscuro para legibilidad */}
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+          
+          {/* Content */}
+          <div className="relative flex items-center justify-center h-full px-4 z-20 pointer-events-none">
+            <div className={`text-center text-white space-y-4 transition-all duration-1000 delay-300 transform ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+              <h2 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight drop-shadow-lg leading-tight">
+                {slide.title}
+              </h2>
+              <p className="text-lg md:text-2xl text-gray-100 font-medium drop-shadow-md max-w-2xl mx-auto">
+                {slide.subtitle}
+              </p>
+              <div className="pt-4">
+                <Link
+                  href="#catalogo"
+                  className="inline-block bg-white text-slate-900 px-8 py-3 rounded-full font-bold text-base md:text-lg hover:bg-blue-50 hover:scale-105 transition-all shadow-xl pointer-events-auto"
+                >
+                  {slide.buttonText}
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       ))}
 
-      {/* Dot Indicators - Solo en desktop */}
-      <div className="hidden md:flex absolute bottom-8 left-1/2 transform -translate-x-1/2 space-x-2 z-30">
+      {/* Dot Indicators */}
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 space-x-3 z-30 flex">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all ${
-              index === currentSlide ? 'bg-white' : 'bg-white bg-opacity-50'
+            className={`h-2 rounded-full transition-all duration-300 ${
+              index === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/50 hover:bg-white/80'
             }`}
+            aria-label={`Go to slide ${index + 1}`}
           />
         ))}
       </div>

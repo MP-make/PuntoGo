@@ -18,93 +18,99 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ id, title, price, originalPrice, image, rating, stock }) => {
   const { addToCart } = useCart();
 
-  // Calcular porcentaje de descuento si hay originalPrice
   const discountPercentage = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
-  
-  // Calcular stock disponible (stock puede ser undefined si Ventify no lo proporciona)
-  const availableStock = stock !== undefined ? stock : 999; // Si no hay stock, asumimos disponibilidad
+  const availableStock = stock !== undefined ? stock : 999;
   const isOutOfStock = availableStock === 0;
   const isLowStock = availableStock > 0 && availableStock <= 5;
 
   return (
-    <div className="bg-white rounded-lg sm:rounded-xl border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden group relative">
-      {/* Image */}
-      <Link href={`/product/${encodeURIComponent(title.replace(/\s+/g, '-'))}`}>
-        <div className="aspect-square bg-gray-200 relative overflow-hidden cursor-pointer">
-          <img
-            src={image}
-            alt={title}
-            className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 ${isOutOfStock ? 'opacity-50 grayscale' : ''}`}
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src = '/placeholder-product.png';
-            }}
-          />
-          {/* Badge dinámico */}
-          {discountPercentage > 0 && !isOutOfStock && (
-            <div className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-red-500 text-white text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded font-bold">
-              -{discountPercentage}%
-            </div>
-          )}
-          {/* Badge de stock agotado */}
-          {isOutOfStock && (
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white px-3 py-2 rounded-lg font-bold text-sm sm:text-base">
-              AGOTADO
-            </div>
-          )}
-        </div>
-      </Link>
-
-      {/* Content */}
-      <div className="p-2.5 sm:p-4 relative">
-        {/* Title */}
-        <Link href={`/product/${encodeURIComponent(title.replace(/\s+/g, '-'))}`}>
-          <h3 className="font-semibold text-gray-800 line-clamp-2 mb-1 sm:mb-2 cursor-pointer hover:text-blue-600 transition-colors text-xs sm:text-sm lg:text-base">{title}</h3>
-        </Link>
-
-        {/* Rating */}
-        <div className="flex items-center mb-2">
-          {[...Array(5)].map((_, i) => (
-            <Star
-              key={i}
-              className={`h-3 w-3 sm:h-4 sm:w-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-            />
-          ))}
-        </div>
-
-        {/* Prices */}
-        <div className="mb-2 sm:mb-4">
-          <span className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900">S/ {price}</span>
-          {originalPrice && <span className="text-xs sm:text-sm text-gray-500 line-through ml-1 sm:ml-2">S/ {originalPrice}</span>}
-        </div>
-
-        {/* Stock indicator */}
-        {!isOutOfStock && stock !== undefined && (
-          <div className="mb-2">
-            {isLowStock ? (
-              <p className="text-xs text-orange-600 font-semibold">
-                ⚠️ Solo quedan {availableStock} unidades
-              </p>
-            ) : (
-              <p className="text-xs text-green-600 font-medium">
-                ✓ {availableStock} disponibles
-              </p>
-            )}
+    <div className="group flex flex-col h-full bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+      {/* 
+        CONTENEDOR DE IMAGEN:
+        - aspect-square: Cuadrado perfecto
+        - SIN PADDING (p-0): La imagen llena TODO el espacio
+      */}
+      <Link 
+        href={`/product/${encodeURIComponent(title.replace(/\s+/g, '-'))}`} 
+        className="relative block aspect-square w-full bg-white overflow-hidden"
+      >
+        {/*
+          IMAGEN DEL PRODUCTO:
+          - object-cover: Se adapta llenando TODO el contenedor (como en tu captura)
+          - La imagen ocupa el 100% sin espacios blancos
+        */}
+        <img
+          src={image}
+          alt={title}
+          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${isOutOfStock ? 'opacity-50 grayscale' : ''}`}
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = '/placeholder-product.png';
+          }}
+        />
+        
+        {/* Badge de Descuento */}
+        {discountPercentage > 0 && !isOutOfStock && (
+          <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded shadow-sm z-10">
+            -{discountPercentage}%
           </div>
         )}
 
-        {/* Button */}
+        {/* Overlay Agotado */}
+        {isOutOfStock && (
+          <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center z-10">
+            <span className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm font-bold uppercase tracking-wider">
+              AGOTADO
+            </span>
+          </div>
+        )}
+      </Link>
+
+      {/* CONTENIDO */}
+      <div className="p-3 flex flex-col flex-1">
+        {/* Title */}
+        <Link href={`/product/${encodeURIComponent(title.replace(/\s+/g, '-'))}`}>
+          <h3 className="text-sm font-medium text-gray-900 line-clamp-2 mb-2 hover:text-blue-600 transition-colors leading-snug min-h-[40px]" title={title}>
+            {title}
+          </h3>
+        </Link>
+
+        {/* Rating & Stock - Restaurado al formato original */}
+        <div className="flex items-center justify-between mb-3 text-xs text-gray-500">
+           <div className="flex items-center">
+             <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400 mr-1" />
+             <span>{rating.toFixed(1)}</span>
+           </div>
+           
+           {!isOutOfStock && stock !== undefined && (
+             <span className={`${isLowStock ? 'text-orange-600 font-medium' : 'text-green-600'}`}>
+               {isLowStock ? `Quedan ${availableStock}` : 'Disponible'}
+             </span>
+           )}
+        </div>
+
+        {/* Pricing */}
+        <div className="mt-auto mb-3">
+          <div className="flex items-baseline gap-2">
+            <span className="text-lg font-bold text-gray-900">S/ {price.toFixed(2)}</span>
+            {originalPrice && (
+              <span className="text-xs text-gray-500 line-through">S/ {originalPrice.toFixed(2)}</span>
+            )}
+          </div>
+        </div>
+
+        {/* Action Button */}
         <button
           onClick={() => !isOutOfStock && addToCart({ id, title, price, image, rating })}
           disabled={isOutOfStock}
-          className={`w-full border-2 py-1.5 sm:py-2 px-2 sm:px-4 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:translate-y-0 translate-y-2 opacity-80 group-hover:opacity-100 text-xs sm:text-sm lg:text-base ${
-            isOutOfStock 
-              ? 'border-gray-300 text-gray-400 cursor-not-allowed' 
-              : 'border-blue-500 text-blue-500 hover:bg-blue-600 hover:text-white'
+          className={`w-full py-2.5 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-all active:scale-95 ${
+              isOutOfStock 
+              ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200' 
+              : 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow-md'
           }`}
         >
-          <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-          {isOutOfStock ? 'Agotado' : 'Agregar'}
+          <ShoppingCart className="w-4 h-4" />
+          {isOutOfStock ? 'Sin Stock' : 'Agregar'}
         </button>
       </div>
     </div>
