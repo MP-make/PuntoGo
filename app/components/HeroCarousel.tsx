@@ -8,6 +8,7 @@ interface Slide {
   subtitle: string;
   buttonText: string;
   image: string;
+  noOverlay?: boolean; // Propiedad opcional para controlar el overlay
 }
 
 interface HeroCarouselProps {
@@ -16,22 +17,32 @@ interface HeroCarouselProps {
 
 const slides: Slide[] = [
   {
-    title: 'Oferta Fin de Semana',
-    subtitle: 'Hasta 40% en Whiskys',
+    title: '',
+    subtitle: '',
+    buttonText: '',
+    image: '/chancho.webp',
+    noOverlay: true // Sin overlay para ver la imagen completa
+  },
+  {
+    title: 'Ofertas Fin de Semana',
+    subtitle: 'Delivery gratis Pisco-Playa por compras mayores a S/ 80',
     buttonText: 'Ver Ofertas',
-    image: '/Carrusel/Carrusel-cocteles.png'
+    image: '/Carrusel/Carrusel-cocteles.png',
+    noOverlay: false
   },
   {
     title: 'Nuevos Vinos Disponibles',
     subtitle: 'Descubre sabores únicos',
     buttonText: 'Explorar',
-    image: '/Carrusel/Carrusel-vino.png'
+    image: '/Carrusel/Carrusel-vino.png',
+    noOverlay: false
   },
   {
     title: 'Tus Cervezas Favoritas',
     subtitle: 'Frescas y de calidad',
     buttonText: 'Comprar Ahora',
-    image: '/Carrusel/Carrusel-cervezaartesanal.png'
+    image: '/Carrusel/Carrusel-cervezaartesanal.png',
+    noOverlay: false
   },
 ];
 
@@ -41,7 +52,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ className }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
+    }, 5000); // 5 segundos por slide
     return () => clearInterval(interval);
   }, []);
 
@@ -59,42 +70,54 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ className }) => {
             index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
           }`}
         >
-          {/* Background Image with Ken Burns Effect */}
+          {/* Background Image - SIN zoom para banner del chancho */}
           <div 
-            className={`absolute inset-0 bg-cover bg-center transition-transform duration-[8000ms] ease-out ${
-               index === currentSlide ? 'scale-110' : 'scale-100'
+            className={`absolute inset-0 ${
+              slide.noOverlay 
+                ? 'bg-cover bg-center bg-no-repeat' 
+                : 'bg-cover bg-center'
+            } ${
+              !slide.noOverlay && 'transition-transform duration-[8000ms] ease-out'
+            } ${
+               index === currentSlide && !slide.noOverlay ? 'scale-110' : 'scale-100'
             }`}
             style={{ backgroundImage: `url(${slide.image})` }}
           />
           
-          {/* Overlay oscuro para legibilidad */}
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+          {/* Overlay oscuro para legibilidad - CONDICIONAL */}
+          {!slide.noOverlay && (
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+          )}
           
-          {/* Content */}
-          <div className="relative flex items-center justify-center h-full px-4 z-20 pointer-events-none">
-            <div className={`text-center text-white space-y-4 transition-all duration-1000 delay-300 transform ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-              <h2 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight drop-shadow-lg leading-tight">
-                {slide.title}
-              </h2>
-              <p className="text-lg md:text-2xl text-gray-100 font-medium drop-shadow-md max-w-2xl mx-auto">
-                {slide.subtitle}
-              </p>
-              <div className="pt-4">
-                <Link
-                  href={
-                    slide.title === 'Oferta Fin de Semana' 
-                      ? '/proximamente' 
-                      : slide.title === 'Nuevos Vinos Disponibles'
-                      ? '/?category=Vinos'
-                      : '/?category=Cervezas'
-                  }
-                  className="inline-block bg-white text-slate-900 px-8 py-3 rounded-full font-bold text-base md:text-lg hover:bg-blue-50 hover:scale-105 transition-all shadow-xl pointer-events-auto"
-                >
-                  {slide.buttonText}
-                </Link>
+          {/* Content - Solo mostrar si hay título */}
+          {slide.title && (
+            <div className="relative flex items-center justify-center h-full px-4 z-20 pointer-events-none">
+              <div className={`text-center text-white space-y-4 transition-all duration-1000 delay-300 transform ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+                <h2 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight drop-shadow-lg leading-tight">
+                  {slide.title}
+                </h2>
+                <p className="text-lg md:text-2xl text-gray-100 font-medium drop-shadow-md max-w-2xl mx-auto">
+                  {slide.subtitle}
+                </p>
+                {slide.buttonText && (
+                  <div className="pt-4">
+                    <Link
+                      href={
+                        slide.title === 'Ofertas Fin de Semana' 
+                          ? '/proximamente' 
+                          : slide.title === 'Nuevos Vinos Disponibles'
+                          ? '/?category=Vinos'
+                          : '/?category=Cervezas'
+                      }
+                      className="inline-block bg-white text-slate-900 px-8 py-3 rounded-full font-bold text-base md:text-lg hover:bg-blue-50 hover:scale-105 transition-all shadow-xl pointer-events-auto"
+                    >
+                      {slide.buttonText}
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
+          )}
         </div>
       ))}
 

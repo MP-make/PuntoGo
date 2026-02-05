@@ -119,19 +119,63 @@ const CartDrawer: React.FC = () => {
         {/* --- FOOTER --- */}
         {cart.length > 0 && (
           <div className="p-6 bg-white border-t border-gray-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+            {/* Alerta de pedido mínimo */}
+            {totalAmount < 20 && (
+              <div className="mb-4 bg-orange-50 border-l-4 border-orange-500 p-3 rounded-lg animate-in fade-in slide-in-from-bottom duration-300">
+                <div className="flex items-start gap-2">
+                  <span className="text-orange-600 text-lg flex-shrink-0">⚠️</span>
+                  <div>
+                    <p className="text-sm font-bold text-orange-900">Pedido mínimo no alcanzado</p>
+                    <p className="text-xs text-orange-800 mt-1">
+                      El pedido mínimo para delivery es <strong>S/ 20.00</strong>. 
+                      Te faltan <strong className="text-orange-600">S/ {(20 - totalAmount).toFixed(2)}</strong>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="flex justify-between items-center mb-4">
               <span className="text-gray-500 font-medium">Subtotal</span>
-              <span className="text-2xl font-black text-slate-900">S/ {totalAmount}</span>
+              <span className="text-2xl font-black text-slate-900">S/ {totalAmount.toFixed(2)}</span>
             </div>
+
+            {/* Info de delivery */}
+            <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <div className="flex items-start gap-2">
+                <span className="text-blue-600 text-lg flex-shrink-0">🚚</span>
+                <div className="text-xs text-blue-900">
+                  <p className="font-bold mb-1">Delivery:</p>
+                  <ul className="space-y-0.5 text-blue-800">
+                    <li>• <strong>S/ 5.00</strong> a todo Pisco y San Andrés</li>
+                    <li>• <strong>GRATIS</strong> en compras mayores a S/ 150</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
             <button
               onClick={() => {
-                closeCart();
-                router.push('/checkout');
+                if (totalAmount >= 20) {
+                  closeCart();
+                  router.push('/checkout');
+                }
               }}
-              className="w-full bg-green-600 text-white font-bold text-lg py-3 rounded-xl hover:bg-green-700 transition-all shadow-lg shadow-green-200"
+              disabled={totalAmount < 20}
+              className={`w-full font-bold text-lg py-3 rounded-xl transition-all shadow-lg ${
+                totalAmount < 20
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-gray-200'
+                  : 'bg-green-600 text-white hover:bg-green-700 shadow-green-200 hover:scale-[1.02]'
+              }`}
             >
-              Ir a Pagar
+              {totalAmount < 20 ? 'Agrega más productos' : 'Ir a Pagar'}
             </button>
+
+            {totalAmount < 20 && (
+              <p className="text-xs text-center text-gray-500 mt-2">
+                Solo realizamos delivery para pedidos mayores a S/ 20
+              </p>
+            )}
           </div>
         )}
       </div>

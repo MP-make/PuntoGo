@@ -66,8 +66,17 @@ export default async function Home({ searchParams }: HomeProps) {
       const normalizedProdCategory = prod.category.toLowerCase().trim();
       
       // Mapeo de categorías para flexibilidad
-      if (normalizedCategory === 'verano') {
-        matchesCategory = normalizedProdCategory === 'verano';
+      if (normalizedCategory === 'playa') {
+        // Playa incluye: verano, bebidas, cervezas, adoquines y marcianos
+        matchesCategory = 
+          normalizedProdCategory === 'verano' ||
+          normalizedProdCategory === 'bebidas' ||
+          normalizedProdCategory === 'cervezas' ||
+          prod.title.toLowerCase().includes('adoquin') ||
+          prod.title.toLowerCase().includes('marciano');
+      } else if (normalizedCategory === 'bebidas') {
+        // Bebidas muestra todos los productos con categoría "Bebidas"
+        matchesCategory = normalizedProdCategory === 'bebidas';
       } else if (normalizedCategory === 'cigarros' || normalizedCategory === 'cigarro') {
         // Buscar productos que tengan "cigarro" en el nombre o categoría
         matchesCategory = 
@@ -152,7 +161,10 @@ export default async function Home({ searchParams }: HomeProps) {
           <>
             <div className="flex flex-col sm:flex-row sm:items-end gap-2 sm:gap-3 mb-6 sm:mb-8 border-b border-gray-200 pb-3 sm:pb-4">
               <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight capitalize">{title}</h2>
-              <span className="text-gray-500 font-medium text-base sm:text-lg">• {filteredProducts.length} productos</span>
+              {/* Solo mostrar cantidad de productos cuando hay filtros activos */}
+              {isFiltering && (
+                <span className="text-gray-500 font-medium text-base sm:text-lg">• {filteredProducts.length} productos</span>
+              )}
             </div>
             
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">

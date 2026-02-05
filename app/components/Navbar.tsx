@@ -41,7 +41,7 @@ const Navbar: React.FC = () => {
             {/* Logo */}
             <Link href="/" className="flex items-center">
               <img
-                src="/PuntoGo logo sinfondo.png"
+                src="/PuntoGo-logo-sinfondo.webp"
                 alt="PuntoGo"
                 className="h-12 sm:h-14 md:h-16 lg:h-[72px] w-auto"
               />

@@ -32,7 +32,7 @@ const CheckoutPage: React.FC = () => {
   // LÓGICA DE COSTOS DE ENVÍO
   const MINIMUM_ORDER = 20;
   const SHIPPING_COST = 5;
-  const FREE_SHIPPING_THRESHOLD = 50;
+  const FREE_SHIPPING_THRESHOLD = 150;
 
   const subtotal = totalAmount;
   const isMinimumMet = subtotal >= MINIMUM_ORDER;
@@ -611,6 +611,25 @@ const CheckoutPage: React.FC = () => {
                 >
                   {!isMinimumMet ? 'Agrega más productos' : 'Generar Solicitud'}
                 </button>
+
+                {/* AVISO DE VERIFICACIÓN DE PAGO */}
+                {metodoPago === 'DIGITAL' && (
+                  <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-400 rounded-xl p-4 mt-4 shadow-sm">
+                    <div className="flex items-start gap-3">
+                      <span className="text-2xl flex-shrink-0">⏱️</span>
+                      <div className="space-y-1">
+                        <p className="text-sm font-bold text-gray-900">Verificación de Pago</p>
+                        <p className="text-xs text-gray-800 leading-relaxed">
+                          Verificaremos tu pago primero. Una vez confirmado que el pago se realizó correctamente, 
+                          nos comunicaremos contigo para coordinar el envío de tu pedido.
+                        </p>
+                        <p className="text-xs font-semibold text-orange-700 mt-2">
+                          ⚠️ No olvides ingresar el número de operación o subir la captura
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

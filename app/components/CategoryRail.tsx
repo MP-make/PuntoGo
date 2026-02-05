@@ -15,11 +15,11 @@ interface CategoryRailProps {
 
 const categories: Category[] = [
   { name: 'Cervezas', icon: Beer },
-  { name: 'Vinos', icon: Wine },
-  { name: 'verano', icon: Sun }, // Coincide con Ventify
+  { name: 'Bebidas', icon: Wine }, // Ícono de copa/botella de vino
+  { name: 'Playa', icon: Sun }, // Ícono de sol para playa
   { name: 'Licores', icon: Martini },
   { name: 'Snacks', icon: Package },
-  { name: 'Cigarros', icon: Cigarette }, // Busca por nombre en productos
+  { name: 'Cigarros', icon: Cigarette },
 ];
 
 const CategoryRail: React.FC<CategoryRailProps> = ({ className }) => {

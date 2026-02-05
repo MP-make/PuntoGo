@@ -37,7 +37,7 @@ export default function Register() {
     <>
       <Link href="/" className="absolute top-3 right-3 sm:top-4 sm:right-4 md:top-6 md:right-6 z-[100]">
         <Image 
-          src="/PuntoGo logo sinfondo.png" 
+          src="/PuntoGo-logo-sinfondo.webp" 
           alt="PuntoGo" 
           width={180} 
           height={67}

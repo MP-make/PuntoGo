@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: '/favicon.ico' },
-      { url: '/PuntoGo favicon.png', type: 'image/png' },
+      { url: '/PuntoGo-favicon.webp', type: 'image/webp' },
     ],
   },
 };
