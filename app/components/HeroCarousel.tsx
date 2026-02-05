@@ -32,7 +32,7 @@ const slides: Slide[] = [
   },
   {
     title: 'Nuevos Vinos Disponibles',
-    subtitle: 'Descubre sabores únicos',
+    subtitle: ' Proximamente ...',
     buttonText: 'Explorar',
     image: '/Carrusel/Carrusel-vino.png',
     noOverlay: false
