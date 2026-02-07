@@ -124,9 +124,10 @@ export default async function Home({ searchParams }: HomeProps) {
       {/* Mostramos botón de volver si hay filtros */}
       {isFiltering && (
         <div className="max-w-7xl mx-auto px-3 sm:px-4 mt-4 sm:mt-6">
-           <a href="/" className="inline-flex items-center text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-             ← Volver al Inicio
-           </a>
+           <Link href="/" className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-blue-800 shadow-md hover:shadow-lg transition-all duration-200 text-sm group">
+             <span className="group-hover:-translate-x-1 transition-transform">←</span>
+             Volver al Inicio
+           </Link>
            {/* Categorías pequeñas para facilitar navegación */}
            <div className="mt-3 sm:mt-4 scale-90 origin-left">
              <CategoryRail />

@@ -17,13 +17,6 @@ interface HeroCarouselProps {
 
 const slides: Slide[] = [
   {
-    title: '',
-    subtitle: '',
-    buttonText: '',
-    image: '/chancho.webp',
-    noOverlay: true // Sin overlay para ver la imagen completa
-  },
-  {
     title: 'Ofertas Fin de Semana',
     subtitle: 'Delivery gratis Pisco-Playa por compras mayores a S/ 80',
     buttonText: 'Ver Ofertas',
@@ -32,7 +25,7 @@ const slides: Slide[] = [
   },
   {
     title: 'Nuevos Vinos Disponibles',
-    subtitle: ' Proximamente ...',
+    subtitle: 'Descubre sabores únicos',
     buttonText: 'Explorar',
     image: '/Carrusel/Carrusel-vino.png',
     noOverlay: false

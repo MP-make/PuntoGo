@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Search, User, ShoppingCart } from 'lucide-react';
+import { Search, User, ShoppingCart, Truck, Gift } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -27,7 +27,7 @@ const Navbar: React.FC = () => {
   const handleSearch = () => {
     if (searchTerm.trim()) {
       router.push(`/?search=${encodeURIComponent(searchTerm)}`);
-      setIsMobileSearchOpen(false); // Cerrar búsqueda móvil después de buscar
+      setIsMobileSearchOpen(false);
     } else {
       router.push('/');
     }
@@ -35,6 +35,28 @@ const Navbar: React.FC = () => {
 
   return (
     <>
+      {/* Banner Informativo - Color naranja vibrante */}
+      <div className="bg-gradient-to-r from-orange-500 via-orange-600 to-orange-500 text-white py-2.5 px-4 text-center overflow-hidden">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-6 text-xs sm:text-sm font-bold">
+          <span className="inline-flex items-center gap-1.5 animate-bounce">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
+              <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>
+            </svg>
+            Delivery desde S/ 30
+          </span>
+          <span className="hidden sm:inline text-white/70">•</span>
+          <span className="inline-flex items-center gap-1.5 animate-bounce" style={{ animationDelay: '0.2s' }}>
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M5 5a3 3 0 015-2.236A3 3 0 0114.83 6H16a2 2 0 110 4h-5V9a1 1 0 10-2 0v1H4a2 2 0 110-4h1.17C5.06 5.687 5 5.35 5 5zm4 1V5a1 1 0 10-1 1h1zm3 0a1 1 0 10-1-1v1h1z" clipRule="evenodd"/>
+              <path d="M9 11H3v5a2 2 0 002 2h4v-7zM11 18h4a2 2 0 002-2v-5h-6v7z"/>
+            </svg>
+            Envío <strong>GRATIS</strong> sobre S/ 150
+          </span>
+        </div>
+      </div>
+
+      {/* Navbar Principal */}
       <nav className="sticky top-0 bg-white/70 backdrop-blur-lg border-b border-white/40 shadow-sm z-50 supports-[backdrop-filter]:bg-white/60">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16">

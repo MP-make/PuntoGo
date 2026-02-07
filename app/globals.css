@@ -2,6 +2,57 @@
 
 /* app/globals.css */
 
+/* Animación para el banner del navbar - Color turquesa/celeste del logo GO */
+@keyframes gradient-slide {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes shine {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-gradient {
+  background: linear-gradient(90deg, #14b8a6, #06b6d4, #22d3ee, #06b6d4, #14b8a6);
+  background-size: 300% 100%;
+  animation: gradient-slide 6s ease infinite;
+}
+
+.animate-shine {
+  background: linear-gradient(90deg, 
+    rgba(255,255,255,0) 0%, 
+    rgba(255,255,255,0.3) 50%, 
+    rgba(255,255,255,0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shine 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 3s ease-in-out infinite;
+}
+
 @media print {
   /* 1. Ocultar TODO el cuerpo de la página */
   body * {

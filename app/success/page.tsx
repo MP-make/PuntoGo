@@ -84,6 +84,11 @@ function SuccessContent() {
                 <p className="text-xs sm:text-sm text-yellow-800 font-medium">
                   Confirmaremos tu pedido por WhatsApp al número <strong>{order?.cliente?.telefono}</strong>
                 </p>
+                {order?.pago?.metodo === 'EFECTIVO' && (
+                  <p className="text-xs sm:text-sm text-yellow-800 font-medium mt-2">
+                    🔍 Estaremos confirmando que el DNI coincida con el nombre ingresado para aprobar tu compra.
+                  </p>
+                )}
               </div>
             </div>
           </div>

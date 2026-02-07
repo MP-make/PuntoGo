@@ -12,6 +12,8 @@ const CartDrawer: React.FC = () => {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
 
+  const MINIMUM_ORDER = 30; // Cambiado de 20 a 30 soles
+
   // 1. Esperamos a que el componente cargue en el navegador (Cliente)
   useEffect(() => {
     setMounted(true);
@@ -120,15 +122,15 @@ const CartDrawer: React.FC = () => {
         {cart.length > 0 && (
           <div className="p-6 bg-white border-t border-gray-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
             {/* Alerta de pedido mínimo */}
-            {totalAmount < 20 && (
+            {totalAmount < MINIMUM_ORDER && (
               <div className="mb-4 bg-orange-50 border-l-4 border-orange-500 p-3 rounded-lg animate-in fade-in slide-in-from-bottom duration-300">
                 <div className="flex items-start gap-2">
                   <span className="text-orange-600 text-lg flex-shrink-0">⚠️</span>
                   <div>
                     <p className="text-sm font-bold text-orange-900">Pedido mínimo no alcanzado</p>
                     <p className="text-xs text-orange-800 mt-1">
-                      El pedido mínimo para delivery es <strong>S/ 20.00</strong>. 
-                      Te faltan <strong className="text-orange-600">S/ {(20 - totalAmount).toFixed(2)}</strong>
+                      El pedido mínimo para delivery es <strong>S/ 30.00</strong>. 
+                      Te faltan <strong className="text-orange-600">S/ {(30 - totalAmount).toFixed(2)}</strong>
                     </p>
                   </div>
                 </div>
@@ -156,24 +158,24 @@ const CartDrawer: React.FC = () => {
             
             <button
               onClick={() => {
-                if (totalAmount >= 20) {
+                if (totalAmount >= MINIMUM_ORDER) {
                   closeCart();
                   router.push('/checkout');
                 }
               }}
-              disabled={totalAmount < 20}
+              disabled={totalAmount < MINIMUM_ORDER}
               className={`w-full font-bold text-lg py-3 rounded-xl transition-all shadow-lg ${
-                totalAmount < 20
+                totalAmount < MINIMUM_ORDER
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-gray-200'
                   : 'bg-green-600 text-white hover:bg-green-700 shadow-green-200 hover:scale-[1.02]'
               }`}
             >
-              {totalAmount < 20 ? 'Agrega más productos' : 'Ir a Pagar'}
+              {totalAmount < MINIMUM_ORDER ? 'Agrega más productos' : 'Ir a Pagar'}
             </button>
 
-            {totalAmount < 20 && (
+            {totalAmount < MINIMUM_ORDER && (
               <p className="text-xs text-center text-gray-500 mt-2">
-                Solo realizamos delivery para pedidos mayores a S/ 20
+                Solo realizamos delivery para pedidos mayores a S/ 30
               </p>
             )}
           </div>

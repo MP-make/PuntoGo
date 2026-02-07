@@ -28,9 +28,11 @@ const CheckoutPage: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [dni, setDni] = useState('');
+  const [dniError, setDniError] = useState<string | null>(null);
 
   // LÓGICA DE COSTOS DE ENVÍO
-  const MINIMUM_ORDER = 20;
+  const MINIMUM_ORDER = 30; // Cambio de 20 a 30 soles
   const SHIPPING_COST = 5;
   const FREE_SHIPPING_THRESHOLD = 150;
 
@@ -132,6 +134,40 @@ const CheckoutPage: React.FC = () => {
     );
   };
 
+  const validatePhone = (phone: string): boolean => {
+    // ...existing code...
+  };
+
+  const validateDni = (dniValue: string): boolean => {
+    setDniError(null);
+    
+    // Remover espacios
+    const cleanDni = dniValue.trim();
+    
+    // Validar longitud (8 dígitos para DNI peruano)
+    if (cleanDni.length !== 8) {
+      setDniError('El DNI debe tener 8 dígitos');
+      return false;
+    }
+    
+    // Validar que solo contenga números
+    if (!/^\d+$/.test(cleanDni)) {
+      setDniError('El DNI solo debe contener números');
+      return false;
+    }
+    
+    return true;
+  };
+
+  const handleDniChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Solo permitir números y máximo 8 caracteres
+    if (value === '' || (/^\d+$/.test(value) && value.length <= 8)) {
+      setDni(value);
+      if (dniError) setDniError(null);
+    }
+  };
+
   const handleGenerateRequest = async () => {
     setError(null);
 
@@ -156,6 +192,17 @@ const CheckoutPage: React.FC = () => {
     if (metodoPago === 'DIGITAL') {
       if (!nroOperacion.trim() && !comprobanteFile) {
         setError('⚠️ Para pago digital debes ingresar el número de operación o adjuntar una captura.');
+        return;
+      }
+    }
+
+    if (metodoPago === 'EFECTIVO') {
+      if (!dni.trim()) {
+        setError('⚠️ Para pago contra entrega debes ingresar tu DNI.');
+        return;
+      }
+      if (dni.length !== 8 || !/^\d+$/.test(dni)) {
+        setError('El DNI debe tener 8 dígitos numéricos.');
         return;
       }
     }
@@ -510,6 +557,34 @@ const CheckoutPage: React.FC = () => {
                   {metodoPago === 'EFECTIVO' && (
                     <div className="mt-4 p-3 sm:p-4 bg-blue-50 rounded-lg">
                       <p className="text-xs sm:text-sm">Paga en efectivo o con tarjeta al momento de la entrega. Nuestro repartidor llevará el POS.</p>
+                      
+                      <div className="mt-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">DNI *</label>
+                        <input
+                          type="text"
+                          value={dni}
+                          onChange={handleDniChange}
+                          className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${dniError ? 'border-red-500' : 'border-gray-300'}`}
+                          placeholder="12345678"
+                          required
+                        />
+                        {dniError && <p className="text-red-500 text-sm mt-1">{dniError}</p>}
+                      </div>
+
+                      <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-400 rounded-xl p-4 mt-4 shadow-sm">
+                        <div className="flex items-start gap-3">
+                          <span className="text-2xl flex-shrink-0">🔍</span>
+                          <div className="space-y-2">
+                            <p className="text-sm font-bold text-gray-900">Verificación de Identidad</p>
+                            <p className="text-xs text-gray-800 leading-relaxed">
+                              Verificaremos que tu DNI coincida con el nombre que ingresaste para aprobar tu compra y garantizar la seguridad de tu pedido.
+                            </p>
+                            <p className="text-xs text-orange-700 font-semibold">
+                              💡 Asegúrate de que el nombre y DNI sean correctos para evitar demoras.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
