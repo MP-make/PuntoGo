@@ -4,6 +4,7 @@ import CategoryRail from './components/CategoryRail';
 import ProductCard from './components/ProductCard';
 import CartDrawer from './components/CartDrawer';
 import { getVentifyProducts } from './services/ventifyService';
+import Link from 'next/link';
 
 // 1. Forzamos renderizado dinámico para que no se quede pegado en caché
 export const dynamic = "force-dynamic";
@@ -88,9 +89,54 @@ export default async function Home({ searchParams }: HomeProps) {
     }
     
     return matchesSearch && matchesCategory;
+  }).filter(prod => {
+    // FILTRO ADICIONAL: Si NO hay búsqueda ni categoría (vista principal "Ofertas de la Semana"),
+    // excluir marcianos, adoquines y snacks
+    if (!search && !category) {
+      const title = prod.title.toLowerCase();
+      const isExcluded = 
+        title.includes('marciano') || 
+        title.includes('adoquin') || 
+        title.includes('snack') ||
+        title.includes('piqueo') ||
+        title.includes('chizito') ||
+        title.includes('doritos');
+      return !isExcluded;
+    }
+    return true;
   }).sort((a, b) => {
-    // Ordenar primero por stock (productos con stock primero)
-    // Si ambos tienen stock o ambos no tienen, mantener orden original
+    // ORDENAMIENTO ESPECIAL para vista principal (Ofertas de la Semana)
+    if (!search && !category) {
+      // Definir el orden de prioridad
+      const priority = [
+        'cerveza pilsen en lata 473ml (sixpack)',
+        'cerveza pilsen en lata 355ml (paquete de 12)',
+        "mike's limon (unidad)",
+        "mike's fresa (unidad)",
+        "mike's maracuya (unidad)",
+        "mike's maracuyá (unidad)"
+      ];
+      
+      const aTitle = a.title.toLowerCase();
+      const bTitle = b.title.toLowerCase();
+      
+      // Buscar índice de prioridad
+      const aIndex = priority.findIndex(p => aTitle.includes(p) || p.includes(aTitle));
+      const bIndex = priority.findIndex(p => bTitle.includes(p) || p.includes(bTitle));
+      
+      // Si ambos están en la lista de prioridad, ordenar por su posición
+      if (aIndex !== -1 && bIndex !== -1) {
+        return aIndex - bIndex;
+      }
+      
+      // Si solo A está en la lista de prioridad, va primero
+      if (aIndex !== -1) return -1;
+      
+      // Si solo B está en la lista de prioridad, va primero
+      if (bIndex !== -1) return 1;
+    }
+    
+    // Ordenar por stock (productos con stock primero)
     if (a.stock > 0 && b.stock === 0) return -1;
     if (a.stock === 0 && b.stock > 0) return 1;
     return 0;

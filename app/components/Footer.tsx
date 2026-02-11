@@ -12,8 +12,8 @@ const Footer = () => {
     <footer className="bg-[#111827] text-gray-400 border-t border-gray-800 mt-auto print:hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-6 sm:pb-8">
         
-        {/* Grid Principal de Enlaces - 5 COLUMNAS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 lg:gap-12 mb-10 sm:mb-12">
+        {/* Grid Principal de Enlaces - 4 COLUMNAS (eliminada "Mi Cuenta") */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12 mb-10 sm:mb-12">
           
           {/* Col 1: Marca */}
           <div className="space-y-4 sm:col-span-2 lg:col-span-1">
@@ -28,26 +28,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Col 2: Mi Cuenta */}
-          <div>
-            <h4 className="text-white font-bold mb-4 sm:mb-6 text-xs sm:text-sm uppercase tracking-widest">Mi Cuenta</h4>
-            <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
-              {user ? (
-                <>
-                  <li><Link href="/profile" className="hover:text-blue-400 transition-colors flex items-center gap-2">Mi Perfil</Link></li>
-                  <li><Link href="/orders" className="hover:text-blue-400 transition-colors flex items-center gap-2">Mis Pedidos</Link></li>
-                  <li><button onClick={logout} className="hover:text-blue-400 transition-colors flex items-center gap-2 text-left">Cerrar Sesión</button></li>
-                </>
-              ) : (
-                <>
-                  <li><Link href="/login" className="hover:text-blue-400 transition-colors flex items-center gap-2">Iniciar Sesión</Link></li>
-                  <li><Link href="/register" className="hover:text-blue-400 transition-colors flex items-center gap-2">Registrarse</Link></li>
-                </>
-              )}
-            </ul>
-          </div>
-
-          {/* Col 3: Legal */}
+          {/* Col 2: Legal */}
           <div>
             <h4 className="text-white font-bold mb-4 sm:mb-6 text-xs sm:text-sm uppercase tracking-widest">Legal</h4>
             <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
@@ -57,7 +38,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Col 4: Contacto */}
+          {/* Col 3: Contacto (sin email) */}
           <div>
             <h4 className="text-white font-bold mb-4 sm:mb-6 text-xs sm:text-sm uppercase tracking-widest">Contacto</h4>
             <ul className="space-y-3 sm:space-y-4 text-xs sm:text-sm">
@@ -75,20 +56,15 @@ const Footer = () => {
                   <p className="text-[10px] sm:text-xs text-gray-500">Servicio a domicilio</p>
                 </div>
               </li>
-              <li className="flex items-start gap-2 sm:gap-3">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded bg-gray-800 flex items-center justify-center text-blue-500 flex-shrink-0">✉️</div>
-                <p className="text-gray-300 mt-1 text-xs sm:text-sm break-all">contacto@puntogo.com</p>
-              </li>
             </ul>
           </div>
 
-          {/* Col 5: Métodos de Pago */}
+          {/* Col 4: Métodos de Pago (sin Mastercard) */}
           <div>
             <h4 className="text-white font-bold mb-4 sm:mb-6 text-xs sm:text-sm uppercase tracking-widest">Métodos de Pago</h4>
             <div className="flex flex-wrap gap-2 sm:gap-3 items-center">
               <img src="/MetodosP/icono-yape.png" alt="Yape" className="h-6 sm:h-8 w-auto" />
               <img src="/MetodosP/icono-plin.png" alt="Plin" className="h-6 sm:h-8 w-auto" />
-              <img src="/MetodosP/icono-MC.png" alt="Mastercard" className="h-6 sm:h-8 w-auto" />
               <div className="h-6 sm:h-8 px-2 sm:px-3 bg-emerald-900/30 border border-emerald-700/50 rounded flex items-center justify-center gap-1">
                 <svg className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                 <span className="text-emerald-500 font-bold text-[9px] sm:text-[10px] tracking-wide uppercase">Efectivo</span>

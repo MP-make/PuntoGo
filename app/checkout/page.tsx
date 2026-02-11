@@ -134,10 +134,6 @@ const CheckoutPage: React.FC = () => {
     );
   };
 
-  const validatePhone = (phone: string): boolean => {
-    // ...existing code...
-  };
-
   const validateDni = (dniValue: string): boolean => {
     setDniError(null);
     
@@ -676,7 +672,7 @@ const CheckoutPage: React.FC = () => {
 
                 {/* Botón de compra */}
                 <button
-                  onClick={() => user ? handleGenerateRequest() : setShowAuthModal(true)}
+                  onClick={handleGenerateRequest}
                   disabled={!isMinimumMet}
                   className={`w-full py-3 sm:py-4 rounded-lg font-bold text-sm sm:text-lg shadow-lg transition-all ${
                     !isMinimumMet 
@@ -712,25 +708,6 @@ const CheckoutPage: React.FC = () => {
       </div>
 
       {/* Modales sin cambios */}
-      {showAuthModal && (
-        <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 max-w-md w-full z-50 animate-in fade-in zoom-in duration-300">
-            <div className="text-center mb-4 sm:mb-6">
-              <div className="text-5xl sm:text-6xl mb-3 sm:mb-4">🎁</div>
-              <h2 className="text-2xl sm:text-3xl font-bold">¡Espera!</h2>
-            </div>
-            <p className="text-sm sm:text-base text-gray-700 mb-6 sm:mb-8 text-center">¿Quieres guardar este pedido y ganar puntos? Regístrate o Inicia Sesión para acceder a ofertas exclusivas y seguimiento en tiempo real. Si continúas como invitado, el pedido no quedará en tu historial.</p>
-            <div className="space-y-3 sm:space-y-4">
-              <Link href="/login" className="block w-full py-3 sm:py-4 bg-blue-600 text-white text-center rounded-lg font-semibold hover:bg-blue-700 text-sm sm:text-lg transition-colors">Iniciar Sesión</Link>
-              <Link href="/register" className="block w-full py-3 sm:py-4 bg-green-600 text-white text-center rounded-lg font-semibold hover:bg-green-700 text-sm sm:text-lg transition-colors">Registrarse</Link>
-            </div>
-            <div className="text-center mt-4 sm:mt-6">
-              <button onClick={() => { setShowAuthModal(false); handleGenerateRequest(); }} className="text-sm sm:text-base text-gray-500 underline hover:text-gray-700">Continuar como Invitado</button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {isProcessing && (
         <div className="fixed inset-0 z-[9999] bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-4">
           <div className="animate-spin rounded-full h-32 w-32 sm:h-40 sm:w-40 border-b-4 border-blue-600 mb-4 sm:mb-6"></div>

@@ -13,9 +13,7 @@ const Navbar: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-  const { user, logout } = useAuth();
 
   useEffect(() => {
     const search = searchParams.get('search');
@@ -96,27 +94,11 @@ const Navbar: React.FC = () => {
                 <Search className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
               </button>
 
-              <button className="p-2 hover:bg-gray-100 rounded-full transition-colors" onClick={() => setIsProfileOpen(!isProfileOpen)}>
+              {/* Icono de usuario deshabilitado temporalmente */}
+              {/* <button className="p-2 hover:bg-gray-100 rounded-full transition-colors" onClick={() => setIsProfileOpen(!isProfileOpen)}>
                 <User className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
-              </button>
-              {isProfileOpen && (
-                <div className="absolute right-0 top-full mt-2 w-48 sm:w-56 bg-white shadow-xl rounded-lg border border-gray-100 z-20">
-                  {user ? (
-                    <>
-                      <Link href="/profile" className="block w-full text-left px-4 py-3 hover:bg-gray-50 cursor-pointer text-sm sm:text-base transition-colors">Mi Perfil</Link>
-                      <Link href="/orders" className="block w-full text-left px-4 py-3 hover:bg-gray-50 cursor-pointer text-sm sm:text-base transition-colors">Mis Pedidos</Link>
-                      <div className="border-t"></div>
-                      <button onClick={logout} className="block w-full text-left px-4 py-3 text-red-600 font-bold hover:bg-gray-50 cursor-pointer text-sm sm:text-base transition-colors">Cerrar Sesión</button>
-                    </>
-                  ) : (
-                    <>
-                      <div className="px-4 py-2 text-gray-500 text-xs sm:text-sm">Bienvenido</div>
-                      <Link href="/login" className="block w-full px-4 py-2 bg-blue-600 text-white text-center rounded hover:bg-blue-700 mx-auto text-sm sm:text-base transition-colors">Iniciar Sesión</Link>
-                      <Link href="/register" className="block w-full px-4 py-2 border border-blue-600 text-blue-600 bg-transparent rounded hover:bg-blue-50 text-center mt-2 text-sm sm:text-base transition-colors">Registrarse</Link>
-                    </>
-                  )}
-                </div>
-              )}
+              </button> */}
+              
               <button className="p-2 relative hover:bg-gray-100 rounded-full transition-colors" onClick={openCart}>
                 <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
                 {totalItems > 0 && (
@@ -149,7 +131,6 @@ const Navbar: React.FC = () => {
           )}
         </div>
       </nav>
-      {isProfileOpen && <div className="fixed inset-0 z-10" onClick={() => setIsProfileOpen(false)}></div>}
     </>
   );
 };
